@@ -1,12 +1,12 @@
 package game
 
 type Game struct {
-	Planets []Planet
+	Planets []*Planet
 }
 
 func NewGame() *Game {
 	return &Game{
-		Planets: []Planet{
+		Planets: []*Planet{
 			{
 				Name: "Balor",
 				Ores: []Ore{

@@ -28,7 +28,7 @@ func BestUpgradeValue(game *Game) (*Planet, float64) {
 			valueToCostRatio := valueIncrease / upgradeCost
 			if valueToCostRatio > bestValue {
 				bestValue = valueToCostRatio
-				bestPlanet = &planet
+				bestPlanet = planet
 			}
 		}
 	}
