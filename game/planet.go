@@ -1,10 +1,14 @@
 package game
 
+import "math"
+
 type Planet struct {
 	Name         string
 	Ores         []Ore
 	Distribution []float64
 	MiningLevel  int
+	UnlockCost   int
+	Distance     int
 }
 
 func (p *Planet) getMiningRate() float64 {
@@ -20,4 +24,9 @@ func (p *Planet) Mine() map[string]float64 {
 		minedOres[ore.Name] = minedAmount
 	}
 	return minedOres
+}
+
+func (p *Planet) getUpgradeCost() float64 {
+	level := float64(p.MiningLevel)
+	return (float64(p.UnlockCost) / 20) * math.Pow(1.3, level-1)
 }

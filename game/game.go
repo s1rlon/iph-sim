@@ -13,7 +13,9 @@ func NewGame() *Game {
 					{Name: "Copper"},
 				},
 				Distribution: []float64{1.0},
-				MiningLevel:  2,
+				MiningLevel:  1,
+				UnlockCost:   100,
+				Distance:     10,
 			},
 			{
 				Name: "Drasta",
@@ -23,6 +25,8 @@ func NewGame() *Game {
 				},
 				Distribution: []float64{0.8, 0.2},
 				MiningLevel:  1,
+				UnlockCost:   200,
+				Distance:     12,
 			},
 			{
 				Name: "Anadius",
@@ -31,7 +35,9 @@ func NewGame() *Game {
 					{Name: "Iron"},
 				},
 				Distribution: []float64{0.5, 0.5},
-				MiningLevel:  4,
+				MiningLevel:  1,
+				UnlockCost:   500,
+				Distance:     14,
 			},
 			{
 				Name: "Dholen",
@@ -41,6 +47,8 @@ func NewGame() *Game {
 				},
 				Distribution: []float64{0.8, 0.2},
 				MiningLevel:  1,
+				UnlockCost:   1250,
+				Distance:     15,
 			},
 		},
 	}

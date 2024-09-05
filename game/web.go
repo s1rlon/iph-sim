@@ -2,33 +2,15 @@ package game
 
 import (
 	"fmt"
+	"log"
+	"sort"
 	"strings"
 )
 
 func GenerateHTMLTable(game *Game) string {
-	// Define ore values
-	oreValues := map[string]float64{
-		"Copper":    1.0,
-		"Iron":      2.0,
-		"Lead":      4.0,
-		"Silica":    8.0,
-		"Aluminium": 17.0,
-		"Silver":    36.0,
-		"Gold":      75.0,
-		"Diamond":   160.0,
-		"Platinium": 340.0,
-		"Titanium":  730.0,
-		"Iridum":    1600.0,
-		"Paladium":  3500.0,
-		"Osmium":    7800.0,
-		"Rhodium":   17500.0,
-		"Inerton":   40000.0,
-		"Quadium":   92000.0,
-		"Scrith":    215000.0,
-		"Uru":       510000.0,
-		"Vibranium": 1250000.0,
-		"Aether":    3200000.0,
-	}
+
+	bestPlanet, bestValue := BestUpgradeValue(game)
+	log.Printf("Best planet to upgrade: %s with value-to-cost ratio: %.2f", bestPlanet.Name, bestValue)
 
 	// Collect mining data
 	miningData := make(map[string]map[string]float64)
@@ -45,12 +27,19 @@ func GenerateHTMLTable(game *Game) string {
 			uniqueOres[ore] = true
 			totalMined[ore] += amount
 			totalPerPlanet[planet.Name] += amount
-			totalValuePerPlanet[planet.Name] += amount * oreValues[ore]
-			totalValue += amount * oreValues[ore]
+			totalValuePerPlanet[planet.Name] += amount * OreValues[ore]
+			totalValue += amount * OreValues[ore]
 		}
 	}
 
-	// Build HTML table
+	var sortedOres []OreValue
+	for ore := range uniqueOres {
+		sortedOres = append(sortedOres, OreValue{Name: ore, Value: OreValues[ore]})
+	}
+	sort.Slice(sortedOres, func(i, j int) bool {
+		return sortedOres[i].Value < sortedOres[j].Value
+	})
+
 	// Build HTML table
 	var sb strings.Builder
 	sb.WriteString("<html><head><style>")
@@ -83,17 +72,24 @@ func GenerateHTMLTable(game *Game) string {
 	sb.WriteString("<td></td></tr>")
 
 	// Table rows
-	for ore := range uniqueOres {
-		sb.WriteString(fmt.Sprintf("<tr><td>%s</td>", ore))
+	for _, ore := range sortedOres {
+		sb.WriteString(fmt.Sprintf("<tr><td>%s</td>", ore.Name))
 		for _, planet := range game.Planets {
-			if amount, exists := miningData[planet.Name][ore]; exists {
+			if amount, exists := miningData[planet.Name][ore.Name]; exists {
 				sb.WriteString(fmt.Sprintf("<td>%.2f</td>", amount))
 			} else {
 				sb.WriteString("<td>-</td>")
 			}
 		}
-		sb.WriteString(fmt.Sprintf("<td>%.2f</td></tr>", totalMined[ore]))
+		sb.WriteString(fmt.Sprintf("<td>%.2f</td></tr>", totalMined[ore.Name]))
 	}
+
+	// Upgrade cost per planet
+	sb.WriteString("<tr><th>Upgrade Cost</th>")
+	for _, planet := range game.Planets {
+		sb.WriteString(fmt.Sprintf("<td>%.2f</td>", planet.getUpgradeCost()))
+	}
+	sb.WriteString("<td></td></tr>")
 
 	sb.WriteString("</table></body></html>")
 	return sb.String()
