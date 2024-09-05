@@ -53,7 +53,8 @@ func GenerateHTMLTable(game *Game) string {
 	// Table header
 	sb.WriteString("<tr><th>Ore</th>")
 	for _, planet := range game.Planets {
-		sb.WriteString(fmt.Sprintf("<th>%s</th>", planet.Name))
+		sb.WriteString(fmt.Sprintf("<th>%s(%d)</th>", planet.Name, planet.MiningLevel))
+
 	}
 	sb.WriteString("<th>Total</th></tr>")
 
