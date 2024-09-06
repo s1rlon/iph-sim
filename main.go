@@ -24,7 +24,7 @@ func main() {
 	})
 
 	r.GET("/reset", func(c *gin.Context) {
-		game.ResetMiningLevels(gameInstance)
+		game.ResetGalaxy(gameInstance)
 		c.Redirect(302, "/")
 	})
 

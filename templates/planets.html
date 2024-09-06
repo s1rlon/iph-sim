@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Idle Planet Miner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
@@ -26,7 +27,7 @@
         <tr>
             <th>Ore</th>
             {{range .Planets}}
-            <th>{{.Name}} ({{.MiningLevel}})</th>
+            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}{{end}})</th>
             {{end}}
             <th>Total</th>
         </tr>
@@ -63,5 +64,11 @@
             <td></td>
         </tr>
     </table>
+    {{if .NextUpgradePlanet}}
+    <p>Next planet to upgrade: {{.NextUpgradePlanet.Name}} (Current Mining Level: {{.NextUpgradePlanet.MiningLevel}}, Upgrade Cost: {{formatNumber .NextUpgradePlanet.UpgradeCost}}, Value Added: {{formatNumber .NextUpgradeValueIncrease}})</p>
+    {{else}}
+    <p>No planet available for upgrade.</p>
+    {{end}}
+    <p>Total money spent on upgrades: {{formatNumber .TotalMoneySpent}}</p>
 </body>
 </html>
