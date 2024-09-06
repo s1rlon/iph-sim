@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+        th { background-color: #333; }
+        tr:nth-child(even) { background-color: #222; }
+        button { margin: 20px; padding: 10px 20px; font-size: 16px; }
+        form { margin: 20px; }
+        input[type="number"] { padding: 5px; font-size: 16px; }
+    </style>
+    <title>Mining Data</title>
+</head>
+<body>
+    <form action="/" method="get">
+        <label for="steps">Number of steps to simulate:</label>
+        <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
+        <button type="submit">Simulate</button>
+    </form>
+    <button onclick="location.href='/reset'">Reset Mining Levels</button>
+    <table>
+        <tr>
+            <th>Ore</th>
+            {{range .Planets}}
+            <th>{{.Name}} ({{.MiningLevel}})</th>
+            {{end}}
+            <th>Total</th>
+        </tr>
+        <tr>
+            <th>Total Value</th>
+            {{range .Planets}}
+            <td>{{formatNumber .TotalValue}}</td>
+            {{end}}
+            <td>{{formatNumber .TotalValue}}</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            {{range .Planets}}
+            <td>{{formatNumber .TotalMined}}</td>
+            {{end}}
+            <td></td>
+        </tr>
+        {{range .Ores}}
+        <tr>
+            <th>{{.Name}}</th>
+            {{range .Amounts}}
+            <td>{{formatNumber .}}</td>
+            {{else}}
+            <td>-</td>
+            {{end}}
+            <td>{{formatNumber .Total}}</td>
+        </tr>
+        {{end}}
+        <tr>
+            <th>Upgrade Cost</th>
+            {{range .Planets}}
+            <td>{{formatNumber .UpgradeCost}}</td>
+            {{end}}
+            <td></td>
+        </tr>
+    </table>
+</body>
+</html>

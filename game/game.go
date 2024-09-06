@@ -1,7 +1,8 @@
 package game
 
 type Game struct {
-	Planets []*Planet
+	Planets   []*Planet
+	LastSteps int
 }
 
 func NewGame() *Game {
@@ -51,5 +52,6 @@ func NewGame() *Game {
 				Distance:     15,
 			},
 		},
+		LastSteps: 0,
 	}
 }

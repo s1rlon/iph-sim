@@ -1,15 +1,53 @@
 package game
 
 import (
-	"fmt"
+	"bytes"
+	"html/template"
 	"log"
+	"net/http"
 	"sort"
-	"strings"
 )
 
-func GenerateHTMLTable(game *Game) string {
-	// Simulate 20 best value upgrades
-	for i := 0; i < 20; i++ {
+type OreData struct {
+	Name    string
+	Amounts []float64
+	Total   float64
+}
+
+type PlanetData struct {
+	Name        string
+	MiningLevel int
+	TotalValue  float64
+	TotalMined  float64
+	UpgradeCost float64
+}
+
+type TableData struct {
+	Planets    []PlanetData
+	Ores       []OreData
+	TotalValue float64
+	LastSteps  int
+}
+
+func ResetMiningLevels(game *Game) {
+	for _, planet := range game.Planets {
+		planet.MiningLevel = 1
+	}
+}
+
+func ResetHandler(game *Game) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ResetMiningLevels(game)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+func GenerateHTMLTable(game *Game, steps int) string {
+	// Update the last steps
+	game.LastSteps = steps
+
+	// Simulate the specified number of best value upgrades
+	for i := 0; i < steps; i++ {
 		bestPlanet, bestValue := BestUpgradeValue(game)
 		if bestPlanet != nil {
 			log.Printf("Upgrade %d: Best planet to upgrade: %s with value-to-cost ratio: %.2f", i+1, bestPlanet.Name, bestValue)
@@ -45,57 +83,54 @@ func GenerateHTMLTable(game *Game) string {
 		return sortedOres[i].Value < sortedOres[j].Value
 	})
 
-	// Build HTML table
-	var sb strings.Builder
-	sb.WriteString("<html><head><style>")
-	sb.WriteString("body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }")
-	sb.WriteString("table { width: 100%; border-collapse: collapse; }")
-	sb.WriteString("th, td { border: 1px solid #444; padding: 8px; text-align: left; }")
-	sb.WriteString("th { background-color: #333; }")
-	sb.WriteString("tr:nth-child(even) { background-color: #222; }")
-	sb.WriteString("</style></head><body><table>")
-
-	// Table header
-	sb.WriteString("<tr><th>Ore</th>")
+	// Prepare data for template
+	var planetData []PlanetData
 	for _, planet := range game.Planets {
-		sb.WriteString(fmt.Sprintf("<th>%s (%d)</th>", planet.Name, planet.MiningLevel))
+		planetData = append(planetData, PlanetData{
+			Name:        planet.Name,
+			MiningLevel: planet.MiningLevel,
+			TotalValue:  totalValuePerPlanet[planet.Name],
+			TotalMined:  totalPerPlanet[planet.Name],
+			UpgradeCost: planet.getUpgradeCost(),
+		})
 	}
-	sb.WriteString("<th>Total</th></tr>")
 
-	// Total value per planet
-	sb.WriteString("<tr><th>Total Value</th>")
-	for _, planet := range game.Planets {
-		sb.WriteString(fmt.Sprintf("<td>%s</td>", formatNumber(totalValuePerPlanet[planet.Name])))
-	}
-	sb.WriteString(fmt.Sprintf("<td>%s</td></tr>", formatNumber(totalValue)))
-
-	// Total mined per planet
-	sb.WriteString("<tr><th>Total</th>")
-	for _, planet := range game.Planets {
-		sb.WriteString(fmt.Sprintf("<td>%s</td>", formatNumber(totalPerPlanet[planet.Name])))
-	}
-	sb.WriteString("<td></td></tr>")
-
-	// Ore rows
+	var oreData []OreData
 	for _, ore := range sortedOres {
-		sb.WriteString(fmt.Sprintf("<tr><th>%s</th>", ore.Name))
+		var amounts []float64
 		for _, planet := range game.Planets {
 			if amount, ok := miningData[planet.Name][ore.Name]; ok {
-				sb.WriteString(fmt.Sprintf("<td>%s</td>", formatNumber(amount)))
+				amounts = append(amounts, amount)
 			} else {
-				sb.WriteString("<td>-</td>")
+				amounts = append(amounts, 0)
 			}
 		}
-		sb.WriteString(fmt.Sprintf("<td>%s</td></tr>", formatNumber(totalMined[ore.Name])))
+		oreData = append(oreData, OreData{
+			Name:    ore.Name,
+			Amounts: amounts,
+			Total:   totalMined[ore.Name],
+		})
 	}
 
-	// Upgrade cost per planet
-	sb.WriteString("<tr><th>Upgrade Cost</th>")
-	for _, planet := range game.Planets {
-		sb.WriteString(fmt.Sprintf("<td>%s</td>", formatNumber(planet.getUpgradeCost())))
+	data := TableData{
+		Planets:    planetData,
+		Ores:       oreData,
+		TotalValue: totalValue,
+		LastSteps:  game.LastSteps,
 	}
-	sb.WriteString("<td></td></tr>")
 
-	sb.WriteString("</table></body></html>")
-	return sb.String()
+	// Parse and execute template
+	tmpl, err := template.New("planets.html").Funcs(template.FuncMap{
+		"formatNumber": formatNumber,
+	}).ParseFiles("templates/planets.html")
+	if err != nil {
+		log.Fatalf("Failed to parse template: %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		log.Fatalf("Failed to execute template: %v", err)
+	}
+
+	return buf.String()
 }
