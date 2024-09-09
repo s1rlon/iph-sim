@@ -22,18 +22,19 @@
         <a href="/">Planets</a>
         <a href="/managers">Managers</a>
     </nav>
-    <form action="/" method="get">
+    <form action="/simulate" method="get">
         <label for="steps">Number of steps to simulate:</label>
         <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
         <button type="submit">Simulate</button>
     </form>
     <button onclick="location.href='/reset'">Reset Galaxy</button>
+    <button onclick="location.href='/assign-managers'">Assign Managers</button>
     <table>
         <tr>
             <th>Ore</th>
             {{range .Planets}}
             {{if not .Locked}}
-            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}/{{.SpeedLevel}}/{{.CargoLevel}}{{end}})</th>
+            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}/{{.SpeedLevel}}/{{.CargoLevel}}{{end}}){{if .Manager}} - {{.Manager.Stars}}★{{end}}</th>
             {{end}}
             {{end}}
             <th>Total</th>

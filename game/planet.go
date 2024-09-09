@@ -12,6 +12,7 @@ type Planet struct {
 	UnlockCost     int
 	Distance       float64
 	Locked         bool
+	Manager        *Manager
 }
 
 func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, distance float64) *Planet {
@@ -30,7 +31,11 @@ func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, 
 
 func (p *Planet) getMiningRate(level int) float64 {
 	levelFloat := float64(level)
-	return 0.25 + (0.1 * (levelFloat - 1)) + (0.017 * (levelFloat - 1) * (levelFloat - 1))
+	rate := 0.25 + (0.1 * (levelFloat - 1)) + (0.017 * (levelFloat - 1) * (levelFloat - 1))
+	if p.Manager != nil {
+		rate *= (1 + 0.25*float64(p.Manager.Stars))
+	}
+	return rate
 }
 
 func (p *Planet) Mine(level int) map[string]float64 {

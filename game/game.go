@@ -74,6 +74,11 @@ func NewGame() *Game {
 	}
 }
 
+func (g *Game) ResetGalaxy() {
+	g.ResetPlanets()
+	g.ResetManagers()
+}
+
 func (g *Game) ResetPlanets() {
 	for _, planet := range g.Planets {
 		planet.MiningLevel = 1
@@ -84,8 +89,15 @@ func (g *Game) ResetPlanets() {
 	g.TotalMoneySpent = 0
 }
 
+func (g *Game) AssignManagers() {
+	assignManagers(g)
+}
+
 func (g *Game) ResetManagers() {
 	for _, manager := range g.Managers {
+		if manager.Planet != nil {
+			manager.Planet.Manager = nil
+		}
 		manager.Planet = nil
 	}
 }

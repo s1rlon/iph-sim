@@ -61,4 +61,10 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 		}
 		c.Redirect(http.StatusFound, "/managers")
 	})
+
+	r.GET("/assign-managers", func(c *gin.Context) {
+		gameInstance.AssignManagers()
+		c.Redirect(http.StatusFound, "/")
+	})
+
 }

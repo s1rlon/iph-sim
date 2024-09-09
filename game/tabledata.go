@@ -19,6 +19,7 @@ type PlanetData struct {
 	TotalMined  float64
 	UpgradeCost float64
 	Locked      bool
+	Manager     *Manager
 }
 
 type TableData struct {
@@ -89,6 +90,7 @@ func CreateTableData(game *Game) TableData {
 				TotalMined:  totalPerPlanet[planet.Name],
 				UpgradeCost: planet.getUpgradeCost(),
 				Locked:      planet.Locked,
+				Manager:     planet.Manager,
 			})
 		}
 	}

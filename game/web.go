@@ -1,11 +1,13 @@
 package game
 
-func ResetGalaxy(game *Game) {
-	game.ResetPlanets()
-	game.ResetManagers()
+func GenerateHTMLTable(game *Game, steps int) interface{} {
+	// Create table data
+	data := CreateTableData(game)
+
+	return data
 }
 
-func GenerateHTMLTable(game *Game, steps int) interface{} {
+func GameSim(game *Game, steps int) interface{} {
 	// Simulate the upgrades
 	SimulateUpgrades(game, steps)
 

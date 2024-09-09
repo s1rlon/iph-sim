@@ -19,8 +19,18 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 		c.HTML(http.StatusOK, "planets.html", data)
 	})
 
+	r.GET("/simulate", func(c *gin.Context) {
+		stepsStr := c.DefaultQuery("steps", "0")
+		steps, err := strconv.Atoi(stepsStr)
+		if err != nil || steps < 1 {
+			steps = gameInstance.LastSteps
+		}
+		data := game.GameSim(gameInstance, steps)
+		c.HTML(http.StatusOK, "planets.html", data)
+	})
+
 	r.GET("/reset", func(c *gin.Context) {
-		gameInstance.ResetPlanets()
+		gameInstance.ResetGalaxy()
 		c.Redirect(http.StatusFound, "/")
 	})
 }
