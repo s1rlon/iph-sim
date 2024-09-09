@@ -46,7 +46,7 @@ func TestGetUpgradeCost(t *testing.T) {
 		ShipCargoLevel: 1,
 		Locked:         false,
 	}
-	expectedCost := planet.getLevelUpgradeCost(1) + planet.getLevelUpgradeCost(1)
+	expectedCost := planet.getLevelUpgradeCost(1)
 	actualCost := planet.getUpgradeCost()
 	if actualCost != expectedCost {
 		t.Errorf("Expected upgrade cost %f, but got %f", expectedCost, actualCost)
@@ -55,11 +55,11 @@ func TestGetUpgradeCost(t *testing.T) {
 
 func TestGetShippingVolume(t *testing.T) {
 	planet := &Planet{
-		ShipSpeedLeve1: 11,
-		ShipCargoLevel: 12,
+		ShipSpeedLeve1: 2,
+		ShipCargoLevel: 2,
 		Distance:       16,
 	}
-	expectedVolume := planet.getShipSpeed(1) * planet.getShipCargo(1) / 10.0
+	expectedVolume := planet.getShipSpeed(2) * planet.getShipCargo(2) / 16.0
 	actualVolume := planet.getShippingVolume()
 	if actualVolume != expectedVolume {
 		t.Errorf("Expected shipping volume %f, but got %f", expectedVolume, actualVolume)

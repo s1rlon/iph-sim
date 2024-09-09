@@ -10,11 +10,11 @@ type Planet struct {
 	ShipSpeedLeve1 int
 	ShipCargoLevel int
 	UnlockCost     int
-	Distance       int
+	Distance       float64
 	Locked         bool
 }
 
-func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, distance int) *Planet {
+func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, distance float64) *Planet {
 	return &Planet{
 		Name:           name,
 		Ores:           ores,
@@ -107,7 +107,7 @@ func (p *Planet) getShipCargo(level int) float64 {
 }
 
 func (p *Planet) getShippingVolume() float64 {
-	return p.getShipSpeed(p.ShipSpeedLeve1) * p.getShipCargo(p.ShipCargoLevel) / float64(p.Distance)
+	return p.getShipSpeed(p.ShipSpeedLeve1) * p.getShipCargo(p.ShipCargoLevel) / p.Distance
 }
 
 func (p *Planet) isCargoSufficent(level int) bool {
