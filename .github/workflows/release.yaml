@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      
+permissions:
+  contents: write  # Ensure the token has write access to contents
 
 jobs:
   build:
