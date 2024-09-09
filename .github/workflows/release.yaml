@@ -24,9 +24,15 @@ jobs:
       - name: Build for Windows
         run: GOOS=windows GOARCH=amd64 go build -o ./tmp/app.exe .
 
+      - name: Copy planets.html
+        run: cp templates/planets.html ./tmp/planets.html
+
+      - name: Create ZIP file
+        run: zip -j ./tmp/release.zip ./tmp/app.exe ./tmp/planets.html
+
       - name: Create and Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./tmp/app.exe
+          files: ./tmp/release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
