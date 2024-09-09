@@ -14,7 +14,7 @@
         form { margin: 20px; }
         input[type="number"] { padding: 5px; font-size: 16px; }
     </style>
-    <title>Mining Data</title>
+<title>Mining Data</title>
 </head>
 <body>
     <form action="/" method="get">
@@ -27,7 +27,9 @@
         <tr>
             <th>Ore</th>
             {{range .Planets}}
-            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}{{end}})</th>
+            {{if not .Locked}}
+            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}/{{.SpeedLevel}}/{{.CargoLevel}}{{end}})</th>
+            {{end}}
             {{end}}
             <th>Total</th>
         </tr>
@@ -69,6 +71,5 @@
     {{else}}
     <p>No planet available for upgrade.</p>
     {{end}}
-    <p>Total money spent on upgrades: {{formatNumber .TotalMoneySpent}}</p>
 </body>
 </html>

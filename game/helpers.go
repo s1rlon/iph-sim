@@ -18,3 +18,10 @@ func formatNumber(value float64) string {
 		return fmt.Sprintf("%.2f", value)
 	}
 }
+
+func GetOreValue(oreName string) float64 {
+	if value, exists := OreValues[oreName]; exists {
+		return value
+	}
+	return 0.0
+}

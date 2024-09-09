@@ -5,6 +5,7 @@ import "log"
 func SimulateUpgrades(game *Game, steps int) {
 	// Update the last steps
 	game.LastSteps = steps
+	game.resetPlanets()
 
 	// Simulate the specified number of best value upgrades
 	for i := 0; i < steps; i++ {
@@ -17,7 +18,7 @@ func SimulateUpgrades(game *Game, steps int) {
 			} else {
 				log.Printf("Upgrade %d: Best planet to upgrade: %s with value-to-cost ratio: %.2f", i+1, bestPlanet.Name, bestValue)
 				game.TotalMoneySpent += bestPlanet.getUpgradeCost()
-				bestPlanet.MiningLevel++
+				bestPlanet.upgradeMining()
 			}
 		}
 	}

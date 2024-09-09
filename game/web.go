@@ -7,11 +7,7 @@ import (
 )
 
 func ResetGalaxy(game *Game) {
-	for _, planet := range game.Planets {
-		planet.MiningLevel = 1
-		planet.Locked = true
-		game.TotalMoneySpent = 0
-	}
+	game.resetPlanets()
 }
 
 func GenerateHTMLTable(game *Game, steps int) string {

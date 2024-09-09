@@ -13,6 +13,8 @@ type OreData struct {
 type PlanetData struct {
 	Name        string
 	MiningLevel int
+	SpeedLevel  int
+	CargoLevel  int
 	TotalValue  float64
 	TotalMined  float64
 	UpgradeCost float64
@@ -37,6 +39,8 @@ func CreateTableData(game *Game) TableData {
 		nextUpgradePlanet = &PlanetData{
 			Name:        nextPlanet.Name,
 			MiningLevel: nextPlanet.MiningLevel,
+			SpeedLevel:  nextPlanet.ShipSpeedLeve1,
+			CargoLevel:  nextPlanet.ShipCargoLevel,
 			TotalValue:  0, // This can be calculated if needed
 			TotalMined:  0, // This can be calculated if needed
 			UpgradeCost: nextPlanet.getUpgradeCost(),
@@ -53,7 +57,7 @@ func CreateTableData(game *Game) TableData {
 	totalValue := 0.0
 
 	for _, planet := range game.Planets {
-		minedOres := planet.Mine()
+		minedOres := planet.Mine(planet.MiningLevel)
 		miningData[planet.Name] = minedOres
 		for ore, amount := range minedOres {
 			uniqueOres[ore] = true
@@ -75,24 +79,30 @@ func CreateTableData(game *Game) TableData {
 	// Prepare data for template
 	var planetData []PlanetData
 	for _, planet := range game.Planets {
-		planetData = append(planetData, PlanetData{
-			Name:        planet.Name,
-			MiningLevel: planet.MiningLevel,
-			TotalValue:  totalValuePerPlanet[planet.Name],
-			TotalMined:  totalPerPlanet[planet.Name],
-			UpgradeCost: planet.getUpgradeCost(),
-			Locked:      planet.Locked,
-		})
+		if !planet.Locked {
+			planetData = append(planetData, PlanetData{
+				Name:        planet.Name,
+				MiningLevel: planet.MiningLevel,
+				SpeedLevel:  planet.ShipSpeedLeve1,
+				CargoLevel:  planet.ShipCargoLevel,
+				TotalValue:  totalValuePerPlanet[planet.Name],
+				TotalMined:  totalPerPlanet[planet.Name],
+				UpgradeCost: planet.getUpgradeCost(),
+				Locked:      planet.Locked,
+			})
+		}
 	}
 
 	var oreData []OreData
 	for _, ore := range sortedOres {
 		var amounts []float64
 		for _, planet := range game.Planets {
-			if amount, ok := miningData[planet.Name][ore.Name]; ok {
-				amounts = append(amounts, amount)
-			} else {
-				amounts = append(amounts, 0)
+			if !planet.Locked {
+				if amount, ok := miningData[planet.Name][ore.Name]; ok {
+					amounts = append(amounts, amount)
+				} else {
+					amounts = append(amounts, 0)
+				}
 			}
 		}
 		oreData = append(oreData, OreData{
