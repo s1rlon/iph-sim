@@ -1,10 +1,11 @@
 package main
 
 import (
-	"strconv"
+	"html/template"
 
 	"github.com/gin-gonic/gin"
 	"sirlon.org/iph-sim/game"
+	"sirlon.org/iph-sim/routes"
 )
 
 func main() {
@@ -13,20 +14,16 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		stepsStr := c.DefaultQuery("steps", "0")
-		steps, err := strconv.Atoi(stepsStr)
-		if err != nil || steps < 1 {
-			steps = 0
-		}
-		html := game.GenerateHTMLTable(gameInstance, steps)
-		c.Data(200, "text/html; charset=utf-8", []byte(html))
-	})
+	funcMap := template.FuncMap{
+		"formatNumber": game.FormatNumber,
+	}
 
-	r.GET("/reset", func(c *gin.Context) {
-		game.ResetGalaxy(gameInstance)
-		c.Redirect(302, "/")
-	})
+	// Load HTML templates with the function map
+	r.SetFuncMap(funcMap)
+	r.LoadHTMLGlob("templates/*")
+
+	routes.RegisterPlanetRoutes(r, gameInstance)
+	routes.RegisterManagerRoutes(r, gameInstance)
 
 	r.Run(":8080") // Start the server on port 8080
 }

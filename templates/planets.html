@@ -13,16 +13,21 @@
         button { margin: 20px; padding: 10px 20px; font-size: 16px; }
         form { margin: 20px; }
         input[type="number"] { padding: 5px; font-size: 16px; }
+        nav { background-color: #333; padding: 10px; }
+        nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
     </style>
-<title>Mining Data</title>
 </head>
 <body>
+    <nav>
+        <a href="/">Planets</a>
+        <a href="/managers">Managers</a>
+    </nav>
     <form action="/" method="get">
         <label for="steps">Number of steps to simulate:</label>
         <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
         <button type="submit">Simulate</button>
     </form>
-    <button onclick="location.href='/reset'">Reset Mining Levels</button>
+    <button onclick="location.href='/reset'">Reset Galaxy</button>
     <table>
         <tr>
             <th>Ore</th>

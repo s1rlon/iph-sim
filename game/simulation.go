@@ -5,7 +5,7 @@ import "log"
 func SimulateUpgrades(game *Game, steps int) {
 	// Update the last steps
 	game.LastSteps = steps
-	game.resetPlanets()
+	game.ResetPlanets()
 
 	// Simulate the specified number of best value upgrades
 	for i := 0; i < steps; i++ {

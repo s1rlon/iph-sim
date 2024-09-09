@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func formatNumber(value float64) string {
+func FormatNumber(value float64) string {
 	switch {
 	case value >= 1_000_000_000_000:
 		return fmt.Sprintf("%.2fT", value/1_000_000_000_000)

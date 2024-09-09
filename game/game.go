@@ -1,12 +1,29 @@
 package game
 
+import (
+	"database/sql"
+	"log"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
 type Game struct {
 	Planets         []*Planet
 	LastSteps       int
+	Managers        []*Manager
 	TotalMoneySpent float64
+	db              *sql.DB
 }
 
 func NewGame() *Game {
+	db, err := sql.Open("sqlite3", "ipm.sql")
+	if err != nil {
+		panic(err)
+	}
+	makeTables(db)
+
+	managers := getManagers(db)
+
 	return &Game{
 		Planets: []*Planet{
 			NewPlanet("Balor", []Ore{{Name: "Copper"}}, []float64{1.0}, 100, 15),
@@ -52,10 +69,12 @@ func NewGame() *Game {
 			NewPlanet("Dune", []Ore{{Name: "Osmium"}}, []float64{0.6}, 1000000000000000, 87),
 		},
 		LastSteps: 0,
+		db:        db,
+		Managers:  managers,
 	}
 }
 
-func (g *Game) resetPlanets() {
+func (g *Game) ResetPlanets() {
 	for _, planet := range g.Planets {
 		planet.MiningLevel = 1
 		planet.ShipSpeedLeve1 = 1
@@ -63,4 +82,60 @@ func (g *Game) resetPlanets() {
 		planet.Locked = true
 	}
 	g.TotalMoneySpent = 0
+}
+
+func (g *Game) ResetManagers() {
+	for _, manager := range g.Managers {
+		manager.Planet = nil
+	}
+}
+
+func makeTables(db *sql.DB) error {
+	managerSQL := `CREATE TABLE IF NOT EXISTS managers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stars INTEGER,
+        primary_role TEXT,
+        secondary_role TEXT
+    );`
+
+	_, err := db.Exec(managerSQL)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getManagers(db *sql.DB) []*Manager {
+	rows, err := db.Query("SELECT id, stars, primary_role, secondary_role FROM managers")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var managers []*Manager
+	for rows.Next() {
+		var id int
+		var stars int
+		var primaryRole string
+		var secondaryRole string
+
+		err = rows.Scan(&id, &stars, &primaryRole, &secondaryRole)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		manager := &Manager{
+			ID:        id,
+			Stars:     stars,
+			Primary:   Role(primaryRole),
+			Secondary: SecondaryRole(secondaryRole),
+		}
+		managers = append(managers, manager)
+	}
+
+	return managers
+}
+
+func (g *Game) GetDB() *sql.DB {
+	return g.db
 }
