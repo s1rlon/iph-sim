@@ -52,6 +52,13 @@ func AddManager(game *Game, manager *Manager) {
 
 }
 
+func (m *Manager) unassignManager() {
+	if m.Planet != nil {
+		m.Planet.Manager = nil
+	}
+	m.Planet = nil
+}
+
 func DeleteManager(game *Game, managerID int) {
 	deleteManagerSQL := `DELETE FROM managers WHERE id = ?`
 	statement, err := game.db.Prepare(deleteManagerSQL)
@@ -68,7 +75,7 @@ func DeleteManager(game *Game, managerID int) {
 	// Delete from the game.Managers slice
 	for i, manager := range game.Managers {
 		if manager.ID == managerID {
-			manager.Planet.Manager = nil
+			manager.unassignManager()
 			game.Managers = append(game.Managers[:i], game.Managers[i+1:]...)
 			break
 		}
@@ -96,9 +103,8 @@ func UpdateManagerPlanet(game *Game, managerID int, planetName string) error {
 		}
 	}
 	if manager.Planet != nil {
-		manager.Planet.Manager = nil
+		manager.unassignManager()
 	}
-	manager.Planet = nil
 	return nil
 }
 
@@ -110,10 +116,7 @@ type PlanetManagerValue struct {
 
 func unassignAllManagers(game *Game) {
 	for _, manager := range game.Managers {
-		if manager.Planet != nil {
-			manager.Planet.Manager = nil
-		}
-		manager.Planet = nil
+		manager.unassignManager()
 	}
 }
 

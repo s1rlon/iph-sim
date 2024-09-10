@@ -98,10 +98,7 @@ func (g *Game) AssignManagers() {
 
 func (g *Game) ResetManagers() {
 	for _, manager := range g.Managers {
-		if manager.Planet != nil {
-			manager.Planet.Manager = nil
-		}
-		manager.Planet = nil
+		manager.unassignManager()
 	}
 }
 
