@@ -14,6 +14,7 @@ func main() {
 
 	r := gin.Default()
 
+	// Define the template function map
 	funcMap := template.FuncMap{
 		"formatNumber": game.FormatNumber,
 	}
@@ -22,8 +23,10 @@ func main() {
 	r.SetFuncMap(funcMap)
 	r.LoadHTMLGlob("templates/*")
 
+	// Register routes
 	routes.RegisterPlanetRoutes(r, gameInstance)
 	routes.RegisterManagerRoutes(r, gameInstance)
+	routes.RegisterProjectRoutes(r, gameInstance)
 
 	r.Run(":8080") // Start the server on port 8080
 }

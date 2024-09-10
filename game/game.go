@@ -11,6 +11,7 @@ type Game struct {
 	Planets         []*Planet
 	LastSteps       int
 	Managers        []*Manager
+	Projects        *Projects
 	TotalMoneySpent float64
 	db              *sql.DB
 }
@@ -23,6 +24,7 @@ func NewGame() *Game {
 	makeTables(db)
 
 	managers := getManagers(db)
+	projects := NewProjects()
 
 	return &Game{
 		Planets: []*Planet{
@@ -71,6 +73,7 @@ func NewGame() *Game {
 		LastSteps: 0,
 		db:        db,
 		Managers:  managers,
+		Projects:  projects,
 	}
 }
 

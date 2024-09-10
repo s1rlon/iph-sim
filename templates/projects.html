@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+        th { background-color: #333; }
+        tr:nth-child(even) { background-color: #222; }
+        button { margin: 20px; padding: 10px 20px; font-size: 16px; }
+        form { margin: 20px; }
+        input[type="number"] { padding: 5px; font-size: 16px; }
+        nav { background-color: #333; padding: 10px; }
+        nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Planets</a>
+        <a href="/managers">Managers</a>
+        <a href="/projects">Projects</a>
+    </nav>
+    <h1>Projects</h1>
+    <table>
+        <tr>
+            <th>Project</th>
+            <th>Level</th>
+        </tr>
+        <tr>
+            <td>Telescope</td>
+            <td>{{.TelescopeLevel}}</td>
+        </tr>
+        <tr>
+            <td>Mining</td>
+            <td>{{.MiningLevel}}</td>
+        </tr>
+        <tr>
+            <td>Ship Speed</td>
+            <td>{{.ShipSpeedLevel}}</td>
+        </tr>
+        <tr>
+            <td>Ship Cargo</td>
+            <td>{{.ShipCargoLevel}}</td>
+        </tr>
+    </table>
+</body>
+</html>

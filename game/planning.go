@@ -7,8 +7,12 @@ func BestUpgradeValue(game *Game) (*Planet, float64, float64) {
 	bestROI := math.MaxFloat64
 	var bestValueIncrease float64
 
-	for _, planet := range game.Planets {
+	maxRange := game.Projects.telescopeRange()
 
+	for i, planet := range game.Planets {
+		if i >= maxRange {
+			break
+		}
 		ROItime := planet.getUpgradeROITime()
 		if ROItime < bestROI {
 			bestROI = ROItime
