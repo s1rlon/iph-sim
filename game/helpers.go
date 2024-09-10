@@ -19,6 +19,10 @@ func FormatNumber(value float64) string {
 	}
 }
 
+func Add(a, b int) int {
+	return a + b
+}
+
 func GetOreValue(oreName string) float64 {
 	if value, exists := OreValues[oreName]; exists {
 		return value

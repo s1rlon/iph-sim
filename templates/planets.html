@@ -33,9 +33,9 @@
     <table>
         <tr>
             <th>Ore</th>
-            {{range .Planets}}
-            {{if not .Locked}}
-            <th>{{.Name}} ({{if .Locked}}Locked{{else}}{{.MiningLevel}}/{{.SpeedLevel}}/{{.CargoLevel}}{{end}}){{if .Manager}} - {{.Manager.Stars}}★{{end}}</th>
+            {{range $index, $planet := .Planets}}
+            {{if not $planet.Locked}}
+            <th>{{$index | add 1}}. {{$planet.Name}} ({{if $planet.Locked}}Locked{{else}}{{$planet.MiningLevel}}/{{$planet.SpeedLevel}}/{{$planet.CargoLevel}}{{end}}){{if $planet.Manager}} - {{$planet.Manager.Stars}}★{{end}}</th>
             {{end}}
             {{end}}
             <th>Total</th>

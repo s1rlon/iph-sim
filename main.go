@@ -17,6 +17,7 @@ func main() {
 	// Define the template function map
 	funcMap := template.FuncMap{
 		"formatNumber": game.FormatNumber,
+		"add":          game.Add,
 	}
 
 	// Load HTML templates with the function map
