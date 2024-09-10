@@ -68,7 +68,7 @@ func NewGame() *Game {
 			NewPlanet("38 Doosie", []Ore{{Name: "Inerton"}, {Name: "Osmium"}}, []float64{0.5, 0.5}, 62000000000000, 84),
 			NewPlanet("39 Zulu", []Ore{{Name: "Inerton"}}, []float64{1.0}, 160000000000000, 84),
 			NewPlanet("40 Unicae", []Ore{{Name: "Inerton"}, {Name: "Quadium"}}, []float64{0.8, 0.2}, 400000000000000, 85),
-			NewPlanet("41Dune", []Ore{{Name: "Osmium"}}, []float64{0.6}, 1000000000000000, 87),
+			NewPlanet("41 Dune", []Ore{{Name: "Osmium"}}, []float64{0.6}, 1000000000000000, 87),
 		},
 		LastSteps: 0,
 		db:        db,
