@@ -43,8 +43,8 @@
                     <input type="hidden" name="manager_id" value="{{.ID}}">
                     <select name="planet">
                         <option value="">None</option>
-                        {{range $.Planets}}
-                        <option value="{{.Name}}" {{if eq .Name $.Planet.Name}}selected{{end}}>{{.Name}}</option>
+                        {{range $index, $planet := $.Planets}}
+                        <option value="{{$planet.Name}}" {{if eq $planet.Name $.Planet.Name}}selected{{end}}>{{$index | add 1}}. {{$planet.Name}}</option>
                         {{end}}
                     </select>
                     <button type="submit">Update</button>
