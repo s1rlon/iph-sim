@@ -11,16 +11,13 @@ func SimulateUpgrades(game *Game, steps int) {
 		bestPlanet, bestROI, valueIncrease := game.bestUpgradeValue()
 		if bestPlanet != nil {
 			if bestPlanet.Locked {
-				game.GamdeData.TotalMoneySpent += bestPlanet.getUpgradeCost()
-				game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, UpgradeHistory{game.GamdeData.CurrentStep, bestPlanet.Name, bestPlanet.getUpgradeCost(), bestROI, valueIncrease, game.GamdeData.TotalMoneySpent})
+				game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, UpgradeHistory{len(game.GamdeData.UpgradeHistory) + 1, bestPlanet.Name, bestPlanet.getUpgradeCost(), bestROI, valueIncrease, game.moneySpent() + bestPlanet.getUpgradeCost()})
 				bestPlanet.Locked = false
 			} else {
-				game.GamdeData.TotalMoneySpent += bestPlanet.getUpgradeCost()
-				game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, UpgradeHistory{game.GamdeData.CurrentStep, bestPlanet.Name, bestPlanet.getUpgradeCost(), bestROI, valueIncrease, game.GamdeData.TotalMoneySpent})
+				game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, UpgradeHistory{len(game.GamdeData.UpgradeHistory) + 1, bestPlanet.Name, bestPlanet.getUpgradeCost(), bestROI, valueIncrease, game.moneySpent() + bestPlanet.getUpgradeCost()})
 				bestPlanet.upgradeMining()
 				game.GamdeData.UpgradeHistory[len(game.GamdeData.UpgradeHistory)-1].Planet = fmt.Sprintf("%s (%d/%d/%d)", bestPlanet.Name, bestPlanet.MiningLevel, bestPlanet.ShipSpeedLeve1, bestPlanet.ShipCargoLevel)
 			}
 		}
-		game.GamdeData.CurrentStep++
 	}
 }

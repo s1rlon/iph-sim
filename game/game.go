@@ -13,12 +13,11 @@ type Game struct {
 	Projects  *Projects
 	db        *sql.DB
 	GamdeData *GameData
+	Ships     *Ships
 }
 
 type GameData struct {
-	UpgradeHistory  []UpgradeHistory
-	TotalMoneySpent float64
-	CurrentStep     int
+	UpgradeHistory []UpgradeHistory
 }
 
 type UpgradeHistory struct {
@@ -39,12 +38,13 @@ func NewGame() *Game {
 		panic(err)
 	}
 
-	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}, TotalMoneySpent: 0, CurrentStep: 1}
+	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}}
 
 	makeTables(db)
 
 	managers := getManagersFromDB(db)
 	projects := loadProjectsFromDB(db)
+	ships := NewShips()
 
 	return &Game{
 		Planets: []*Planet{
@@ -95,6 +95,7 @@ func NewGame() *Game {
 		Managers:  managers,
 		Projects:  projects,
 		GamdeData: gameData,
+		Ships:     ships,
 	}
 }
 
@@ -119,7 +120,6 @@ func (g *Game) InitData() {
 func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
-	g.GamdeData.CurrentStep = 1
 	g.GamdeData.UpgradeHistory = []UpgradeHistory{}
 	g.Projects = newProjects()
 }
@@ -128,11 +128,22 @@ func (g *Game) ResetPlanets() {
 	for _, planet := range g.Planets {
 		planet.resetPlanet()
 	}
-	g.GamdeData.TotalMoneySpent = 0
 }
 
 func (g *Game) ResetManagers() {
 	for _, manager := range g.Managers {
 		manager.unassignManager()
 	}
+}
+
+func (g *Game) moneySpent() float64 {
+	total := 0.0
+	for _, upgrade := range g.GamdeData.UpgradeHistory {
+		total += upgrade.Upgradecost
+	}
+	return total
+}
+
+func (g *Game) currentStep() int {
+	return len(g.GamdeData.UpgradeHistory)
 }

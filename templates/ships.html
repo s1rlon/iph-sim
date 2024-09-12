@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Projects</title>
+    <title>Ships</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
@@ -29,5 +29,46 @@
     <a href="/ships">Ships</a>
   </nav>
   <h1>Ships</h1>
+  <form action="/update-ships" method="post">
+    <table>
+      <tr>
+        <th>Ship</th>
+        <th>Enabled</th>
+      </tr>
+      <tr>
+        <td>AdShip</td>
+        <td><input type="checkbox" name="AdShip" {{if .AdShip}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Daugtership</td>
+        <td><input type="checkbox" name="Daugtership" {{if .Daugtership}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Eldership</td>
+        <td><input type="checkbox" name="Eldership" {{if .Eldership}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Aurora</td>
+        <td><input type="checkbox" name="Aurora" {{if .Aurora}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Enigma</td>
+        <td><input type="checkbox" name="Enigma" {{if .Enigma}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Exodus</td>
+        <td><input type="checkbox" name="Exodus" {{if .Exodus}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Merchant</td>
+        <td><input type="checkbox" name="Merchant" {{if .Merchant}}checked{{end}}></td>
+      </tr>
+      <tr>
+        <td>Thunderhorse</td>
+        <td><input type="checkbox" name="Thunderhorse" {{if .Thunderhorse}}checked{{end}}></td>
+      </tr>
+    </table>
+    <button type="submit">Update Ships</button>
+  </form>
 </body>
 </html>

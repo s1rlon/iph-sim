@@ -117,6 +117,10 @@ func (game *Game) CreateTableData() TableData {
 		})
 	}
 
+	sort.Slice(game.GamdeData.UpgradeHistory, func(i, j int) bool {
+		return game.GamdeData.UpgradeHistory[i].Stepnum > game.GamdeData.UpgradeHistory[j].Stepnum
+	})
+
 	return TableData{
 		Planets:                  planetData,
 		Ores:                     oreData,
@@ -124,7 +128,7 @@ func (game *Game) CreateTableData() TableData {
 		LastSteps:                game.LastSteps,
 		NextUpgradePlanet:        nextUpgradePlanet,
 		NextUpgradeValueIncrease: nextValueIncrease,
-		TotalMoneySpent:          game.GamdeData.TotalMoneySpent,
+		TotalMoneySpent:          game.moneySpent(),
 		UpgradeHistory:           game.GamdeData.UpgradeHistory,
 	}
 }

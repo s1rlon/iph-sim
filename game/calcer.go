@@ -31,7 +31,28 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	}
 	//colony level
 	rate *= (1 + 0.3*float64(planet.ColonyLevel))
+	rate *= p.getMiningGlobalBonus()
 	return rate
+}
+
+func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
+	projects := 1.0
+	managers := 1.0
+	rooms := 1.0
+	//Ships
+	ships := 1.0
+	if p.game.Ships.AdShip {
+		ships += 0.2
+	}
+	if p.game.Ships.Daugtership {
+		ships += 0.5
+	}
+	if p.game.Ships.Eldership {
+		ships += 1.0
+	}
+	//Station
+	station := 1.0
+	return projects * managers * rooms * ships * station
 }
 
 func (p *PlanetCalcer) getShipSpeed(planet *Planet, level float64) float64 {
