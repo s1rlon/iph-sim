@@ -18,6 +18,7 @@ type PlanetData struct {
 	TotalValue  float64
 	TotalMined  float64
 	UpgradeCost float64
+	ColonyLevel int
 	Locked      bool
 	Manager     *Manager
 }
@@ -30,11 +31,12 @@ type TableData struct {
 	NextUpgradePlanet        *PlanetData
 	NextUpgradeValueIncrease float64
 	TotalMoneySpent          float64
+	UpgradeHistory           []UpgradeHistory
 }
 
 func (game *Game) CreateTableData() TableData {
 	// Determine the next planet to upgrade
-	nextPlanet, _, nextValueIncrease := BestUpgradeValue(game)
+	nextPlanet, _, nextValueIncrease := game.bestUpgradeValue()
 	var nextUpgradePlanet *PlanetData
 	if nextPlanet != nil {
 		nextUpgradePlanet = &PlanetData{
@@ -89,6 +91,7 @@ func (game *Game) CreateTableData() TableData {
 				TotalValue:  totalValuePerPlanet[planet.Name],
 				TotalMined:  totalPerPlanet[planet.Name],
 				UpgradeCost: planet.getUpgradeCost(),
+				ColonyLevel: planet.ColonyLevel,
 				Locked:      planet.Locked,
 				Manager:     planet.Manager,
 			})
@@ -121,6 +124,7 @@ func (game *Game) CreateTableData() TableData {
 		LastSteps:                game.LastSteps,
 		NextUpgradePlanet:        nextUpgradePlanet,
 		NextUpgradeValueIncrease: nextValueIncrease,
-		TotalMoneySpent:          game.TotalMoneySpent,
+		TotalMoneySpent:          game.GamdeData.TotalMoneySpent,
+		UpgradeHistory:           game.GamdeData.UpgradeHistory,
 	}
 }

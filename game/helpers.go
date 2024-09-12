@@ -29,3 +29,10 @@ func GetOreValue(oreName string) float64 {
 	}
 	return 0.0
 }
+
+func FormatTime(seconds float64) string {
+	hours := int(seconds) / 3600
+	minutes := (int(seconds) % 3600) / 60
+	secs := int(seconds) % 60
+	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, secs)
+}

@@ -33,4 +33,15 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 		gameInstance.ResetGalaxy()
 		c.Redirect(http.StatusFound, "/")
 	})
+
+	r.POST("/update-colony-level", func(c *gin.Context) {
+		planetName := c.PostForm("planet")
+		colonyLevel, err := strconv.Atoi(c.PostForm("colonyLevel"))
+		if err != nil {
+			c.String(http.StatusBadRequest, "Invalid stars value")
+			return
+		}
+		gameInstance.UpdateColonyLevel(planetName, colonyLevel)
+		c.Redirect(http.StatusFound, "/")
+	})
 }

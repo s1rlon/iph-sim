@@ -2,28 +2,48 @@ package game
 
 import (
 	"database/sql"
-	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Game struct {
-	Planets         []*Planet
-	LastSteps       int
-	Managers        []*Manager
-	Projects        *Projects
-	TotalMoneySpent float64
-	db              *sql.DB
+	Planets   []*Planet
+	LastSteps int
+	Managers  []*Manager
+	Projects  *Projects
+	db        *sql.DB
+	GamdeData *GameData
 }
+
+type GameData struct {
+	UpgradeHistory  []UpgradeHistory
+	TotalMoneySpent float64
+	CurrentStep     int
+}
+
+type UpgradeHistory struct {
+	Stepnum       int
+	Planet        string
+	Upgradecost   float64
+	Roitime       float64
+	ValueIncrease float64
+	TotalSpend    float64
+}
+
+var GlobalCalcer *Calcer
+var DB *sql.DB
 
 func NewGame() *Game {
 	db, err := sql.Open("sqlite3", "ipm.sql")
 	if err != nil {
 		panic(err)
 	}
+
+	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}, TotalMoneySpent: 0, CurrentStep: 1}
+
 	makeTables(db)
 
-	managers := getManagers(db)
+	managers := getManagersFromDB(db)
 	projects := newProjects()
 
 	return &Game{
@@ -74,76 +94,44 @@ func NewGame() *Game {
 		db:        db,
 		Managers:  managers,
 		Projects:  projects,
+		GamdeData: gameData,
+	}
+}
+
+func (g *Game) InitData() {
+	GlobalCalcer = NewCalcer(g)
+	DB = g.db
+	dbPlanets, _ := getPlanetsFromDB(g.db)
+	for _, planet := range g.Planets {
+		for _, dbPlanet := range dbPlanets {
+			if planet.Name == dbPlanet.Name {
+				planet.MiningLevel = dbPlanet.MiningLevel
+				planet.ShipSpeedLeve1 = dbPlanet.ShipSpeedLeve1
+				planet.ShipCargoLevel = dbPlanet.ShipCargoLevel
+				planet.Locked = dbPlanet.Locked
+				planet.ColonyLevel = dbPlanet.ColonyLevel
+				planet.AlchemyLevel = dbPlanet.AlchemyLevel
+			}
+		}
 	}
 }
 
 func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
+	g.GamdeData.CurrentStep = 1
+	g.GamdeData.UpgradeHistory = []UpgradeHistory{}
 }
 
 func (g *Game) ResetPlanets() {
 	for _, planet := range g.Planets {
-		planet.MiningLevel = 1
-		planet.ShipSpeedLeve1 = 1
-		planet.ShipCargoLevel = 1
-		planet.Locked = true
+		planet.resetPlanet()
 	}
-	g.TotalMoneySpent = 0
+	g.GamdeData.TotalMoneySpent = 0
 }
 
 func (g *Game) ResetManagers() {
 	for _, manager := range g.Managers {
 		manager.unassignManager()
 	}
-}
-
-func makeTables(db *sql.DB) error {
-	managerSQL := `CREATE TABLE IF NOT EXISTS managers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        stars INTEGER,
-        primary_role TEXT,
-        secondary_role TEXT
-    );`
-
-	_, err := db.Exec(managerSQL)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func getManagers(db *sql.DB) []*Manager {
-	rows, err := db.Query("SELECT id, stars, primary_role, secondary_role FROM managers")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	var managers []*Manager
-	for rows.Next() {
-		var id int
-		var stars int
-		var primaryRole string
-		var secondaryRole string
-
-		err = rows.Scan(&id, &stars, &primaryRole, &secondaryRole)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		manager := &Manager{
-			ID:        id,
-			Stars:     stars,
-			Primary:   Role(primaryRole),
-			Secondary: SecondaryRole(secondaryRole),
-		}
-		managers = append(managers, manager)
-	}
-
-	return managers
-}
-
-func (g *Game) GetDB() *sql.DB {
-	return g.db
 }

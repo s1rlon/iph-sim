@@ -2,14 +2,14 @@ package game
 
 import "math"
 
-func BestUpgradeValue(game *Game) (*Planet, float64, float64) {
+func (g *Game) bestUpgradeValue() (*Planet, float64, float64) {
 	var bestPlanet *Planet
 	bestROI := math.MaxFloat64
 	var bestValueIncrease float64
 
-	maxRange := game.Projects.telescopeRange()
+	maxRange := g.Projects.telescopeRange()
 
-	for i, planet := range game.Planets {
+	for i, planet := range g.Planets {
 		if i >= maxRange {
 			break
 		}

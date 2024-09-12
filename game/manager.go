@@ -97,6 +97,7 @@ func (g *Game) UpdateManagerPlanet(managerID int, planetName string) error {
 
 	for _, planet := range g.Planets {
 		if planet.Name == planetName {
+			manager.unassignManager()
 			manager.Planet = planet
 			planet.Manager = manager
 			return nil

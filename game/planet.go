@@ -10,6 +10,8 @@ type Planet struct {
 	ShipSpeedLeve1 int
 	ShipCargoLevel int
 	UnlockCost     int
+	ColonyLevel    int
+	AlchemyLevel   int
 	Distance       float64
 	Locked         bool
 	Manager        *Manager
@@ -23,19 +25,33 @@ func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, 
 		MiningLevel:    1, // Default value
 		ShipSpeedLeve1: 1, // Default value
 		ShipCargoLevel: 1, // Default value
+		ColonyLevel:    0,
+		AlchemyLevel:   0,
+		Locked:         true, // Default value
 		UnlockCost:     unlockCost,
 		Distance:       distance,
-		Locked:         true, // Default value
+	}
+}
+
+func (g *Game) GetPlanetByName(name string) *Planet {
+	for _, planet := range g.Planets {
+		if planet.Name == name {
+			return planet
+		}
+	}
+	return nil
+}
+
+func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
+	planet := g.GetPlanetByName(planetName)
+	if planet != nil {
+		planet.ColonyLevel = colonyLevel
 	}
 }
 
 func (p *Planet) getMiningRate(level int) float64 {
 	levelFloat := float64(level)
-	rate := 0.25 + (0.1 * (levelFloat - 1)) + (0.017 * (levelFloat - 1) * (levelFloat - 1))
-	if p.Manager != nil {
-		rate *= (1 + 0.25*float64(p.Manager.Stars))
-	}
-	return rate
+	return GlobalCalcer.planetCalcer.getMiningRate(p, levelFloat)
 }
 
 func (p *Planet) Mine(level int) map[string]float64 {
@@ -103,12 +119,12 @@ func (p *Planet) getUpgradeROITime() float64 {
 
 func (p *Planet) getShipSpeed(level int) float64 {
 	levelfloat := float64(level)
-	return 1 + 0.2*(levelfloat-1) + (1.0/75)*(levelfloat-1)*(levelfloat-1)
+	return GlobalCalcer.planetCalcer.getShipSpeed(p, levelfloat)
 }
 
 func (p *Planet) getShipCargo(level int) float64 {
 	levelfloat := float64(level)
-	return 5 + 2*(levelfloat-1) + 0.1*(levelfloat-1)*(levelfloat-1)
+	return GlobalCalcer.planetCalcer.getShipCargo(p, levelfloat)
 }
 
 func (p *Planet) getShippingVolume() float64 {
@@ -131,6 +147,7 @@ func (p *Planet) upgradeMining() {
 			p.ShipSpeedLeve1++
 		}
 	}
+	updatePlanetDB(DB, p)
 }
 
 func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
@@ -148,4 +165,15 @@ func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
 	cargoValue := cargoIncrease / cargoCost
 	speedValue := speedCostIncrease / speedCost
 	return cargoValue > speedValue
+}
+
+func (p *Planet) resetPlanet() {
+	p.MiningLevel = 1
+	p.ShipSpeedLeve1 = 1
+	p.ShipCargoLevel = 1
+	p.ColonyLevel = 0
+	p.AlchemyLevel = 0
+	p.Locked = true
+	p.Manager = nil
+	resetPlanetDB(DB, p)
 }

@@ -11,6 +11,7 @@ import (
 func main() {
 	// Initialize game with planets
 	gameInstance := game.NewGame()
+	gameInstance.InitData()
 
 	r := gin.Default()
 
@@ -18,6 +19,7 @@ func main() {
 	funcMap := template.FuncMap{
 		"formatNumber": game.FormatNumber,
 		"add":          game.Add,
+		"formatTime":   game.FormatTime,
 	}
 
 	// Load HTML templates with the function map

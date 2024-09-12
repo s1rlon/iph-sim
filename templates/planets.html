@@ -28,8 +28,10 @@
         <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
         <button type="submit">Simulate</button>
     </form>
+    <button onclick="location.href='/'">Refresh</button>
     <button onclick="location.href='/reset'">Reset Galaxy</button>
     <button onclick="location.href='/assign-managers'">Assign Managers</button>
+    <h2>Planets</h2>
     <table>
         <tr>
             <th>Ore</th>
@@ -40,6 +42,12 @@
             {{end}}
             <th>Total</th>
         </tr>
+        <tr>
+            <th>Colony</th>
+            {{range .Planets}}
+            <td>{{.ColonyLevel}}</td>
+            {{end}}
+            <td></td>
         <tr>
             <th>Total Value</th>
             {{range .Planets}}
@@ -78,5 +86,41 @@
     {{else}}
     <p>No planet available for upgrade.</p>
     {{end}}
+    <p>Total Spent: {{formatNumber .TotalMoneySpent}}</p>
+
+    <h2>Set Colony Level</h2>
+    <form action="/update-colony-level" method="post">
+        <label for="planet">Planet:</label>
+        <select id="planet" name="planet">
+            {{range .Planets}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select>
+        <label for="colonyLevel">Colony Level:</label>
+        <input type="number" id="colonyLevel" name="colonyLevel" min="0">
+        <button type="submit">Set Colony Level</button>
+    </form>
+
+    <h2>Upgrade History</h2>
+    <table>
+        <tr>
+            <th>Step</th>
+            <th>Planet</th>
+            <th>Cost</th>
+            <th>Increase</th>
+            <th>ROI Time</th>
+            <th>Money Spent</th> 
+        </tr>
+        {{range .UpgradeHistory}}
+        <tr>
+            <td>{{.Stepnum}}</td>
+            <td>{{.Planet}}</td>
+            <td>{{formatNumber .Upgradecost}}</td>
+            <td>{{formatNumber .ValueIncrease}}</td>
+            <td>{{formatTime .Roitime}}</td>
+            <td>{{formatNumber .TotalSpend}}</td>
+        </tr>
+        {{end}}
+    </table>
 </body>
 </html>
