@@ -7,9 +7,9 @@ type Projects struct {
 	ShipCargoLevel int
 }
 
-func NewProjects() *Projects {
+func newProjects() *Projects {
 	return &Projects{
-		TelescopeLevel: 0,
+		TelescopeLevel: 1,
 		MiningLevel:    0,
 		ShipSpeedLevel: 0,
 		ShipCargoLevel: 0,

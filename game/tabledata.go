@@ -32,7 +32,7 @@ type TableData struct {
 	TotalMoneySpent          float64
 }
 
-func CreateTableData(game *Game) TableData {
+func (game *Game) CreateTableData() TableData {
 	// Determine the next planet to upgrade
 	nextPlanet, _, nextValueIncrease := BestUpgradeValue(game)
 	var nextUpgradePlanet *PlanetData

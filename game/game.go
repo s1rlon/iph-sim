@@ -24,7 +24,7 @@ func NewGame() *Game {
 	makeTables(db)
 
 	managers := getManagers(db)
-	projects := NewProjects()
+	projects := newProjects()
 
 	return &Game{
 		Planets: []*Planet{
@@ -90,10 +90,6 @@ func (g *Game) ResetPlanets() {
 		planet.Locked = true
 	}
 	g.TotalMoneySpent = 0
-}
-
-func (g *Game) AssignManagers() {
-	assignManagers(g)
 }
 
 func (g *Game) ResetManagers() {

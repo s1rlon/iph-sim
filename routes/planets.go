@@ -15,7 +15,7 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 		if err != nil || steps < 1 {
 			steps = gameInstance.LastSteps
 		}
-		data := game.GenerateHTMLTable(gameInstance, steps)
+		data := gameInstance.GenerateHTMLTable(steps)
 		c.HTML(http.StatusOK, "planets.html", data)
 	})
 
@@ -25,7 +25,7 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 		if err != nil || steps < 1 {
 			steps = gameInstance.LastSteps
 		}
-		data := game.GameSim(gameInstance, steps)
+		data := gameInstance.SimAndTable(steps)
 		c.HTML(http.StatusOK, "planets.html", data)
 	})
 

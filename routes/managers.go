@@ -10,7 +10,7 @@ import (
 
 func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 	r.GET("/managers", func(c *gin.Context) {
-		managers := game.GetManagers(gameInstance)
+		managers := gameInstance.GetManagers()
 		planets := gameInstance.Planets
 		c.HTML(http.StatusOK, "managers.html", gin.H{
 			"Managers": managers,
@@ -32,7 +32,7 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 			Primary:   game.Role(primary),
 			Secondary: game.SecondaryRole(secondary),
 		}
-		game.AddManager(gameInstance, manager)
+		gameInstance.AddManager(manager)
 		c.Redirect(http.StatusFound, "/managers")
 	})
 
@@ -42,7 +42,7 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 			c.String(http.StatusBadRequest, "Invalid manager ID")
 			return
 		}
-		game.DeleteManager(gameInstance, managerID)
+		gameInstance.DeleteManager(managerID)
 		c.Redirect(http.StatusFound, "/managers")
 	})
 
@@ -54,7 +54,7 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 		}
 		planetName := c.PostForm("planet")
 
-		err = game.UpdateManagerPlanet(gameInstance, managerID, planetName)
+		err = gameInstance.UpdateManagerPlanet(managerID, planetName)
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Failed to update manager planet")
 			return

@@ -1,18 +1,18 @@
 package game
 
-func GenerateHTMLTable(game *Game, steps int) interface{} {
+func (game *Game) GenerateHTMLTable(steps int) interface{} {
 	// Create table data
-	data := CreateTableData(game)
+	data := game.CreateTableData()
 
 	return data
 }
 
-func GameSim(game *Game, steps int) interface{} {
+func (g *Game) SimAndTable(steps int) interface{} {
 	// Simulate the upgrades
-	SimulateUpgrades(game, steps)
+	SimulateUpgrades(g, steps)
 
 	// Create table data
-	data := CreateTableData(game)
+	data := g.CreateTableData()
 
 	return data
 }

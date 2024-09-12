@@ -32,13 +32,13 @@ type Manager struct {
 	Planet    *Planet
 }
 
-func GetManagers(game *Game) []*Manager {
-	return game.Managers
+func (g *Game) GetManagers() []*Manager {
+	return g.Managers
 }
 
-func AddManager(game *Game, manager *Manager) {
+func (g *Game) AddManager(manager *Manager) {
 	insertManagerSQL := `INSERT INTO managers (stars, primary_role, secondary_role) VALUES (?, ?, ?)`
-	statement, err := game.db.Prepare(insertManagerSQL)
+	statement, err := g.db.Prepare(insertManagerSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func AddManager(game *Game, manager *Manager) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	game.Managers = append(game.Managers, manager)
+	g.Managers = append(g.Managers, manager)
 
 }
 
@@ -59,9 +59,9 @@ func (m *Manager) unassignManager() {
 	m.Planet = nil
 }
 
-func DeleteManager(game *Game, managerID int) {
+func (g *Game) DeleteManager(managerID int) {
 	deleteManagerSQL := `DELETE FROM managers WHERE id = ?`
-	statement, err := game.db.Prepare(deleteManagerSQL)
+	statement, err := g.db.Prepare(deleteManagerSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,18 +73,18 @@ func DeleteManager(game *Game, managerID int) {
 	}
 
 	// Delete from the game.Managers slice
-	for i, manager := range game.Managers {
+	for i, manager := range g.Managers {
 		if manager.ID == managerID {
 			manager.unassignManager()
-			game.Managers = append(game.Managers[:i], game.Managers[i+1:]...)
+			g.Managers = append(g.Managers[:i], g.Managers[i+1:]...)
 			break
 		}
 	}
 }
 
-func UpdateManagerPlanet(game *Game, managerID int, planetName string) error {
+func (g *Game) UpdateManagerPlanet(managerID int, planetName string) error {
 	var manager *Manager
-	for _, m := range game.Managers {
+	for _, m := range g.Managers {
 		if m.ID == managerID {
 			manager = m
 			break
@@ -95,7 +95,7 @@ func UpdateManagerPlanet(game *Game, managerID int, planetName string) error {
 		return fmt.Errorf("manager with ID %d not found", managerID)
 	}
 
-	for _, planet := range game.Planets {
+	for _, planet := range g.Planets {
 		if planet.Name == planetName {
 			manager.Planet = planet
 			planet.Manager = manager
@@ -114,21 +114,21 @@ type PlanetManagerValue struct {
 	AddedValue float64
 }
 
-func unassignAllManagers(game *Game) {
+func (game *Game) unassignAllManagers() {
 	for _, manager := range game.Managers {
 		manager.unassignManager()
 	}
 }
 
-func assignManagers(game *Game) {
+func (g *Game) AssignManagers() {
 	// Create a slice to store the added values for each planet-manager combination
 	var planetManagerValues []PlanetManagerValue
 
-	unassignAllManagers(game)
+	g.unassignAllManagers()
 
 	// Calculate the added value for each planet-manager combination
-	for _, manager := range game.Managers {
-		for _, planet := range game.Planets {
+	for _, manager := range g.Managers {
+		for _, planet := range g.Planets {
 			currentValue := planet.getMinedOresValue(planet.MiningLevel)
 			planet.Manager = manager
 			newValue := planet.getMinedOresValue(planet.MiningLevel)
@@ -159,10 +159,10 @@ func assignManagers(game *Game) {
 		}
 
 		// Assign the manager to the planet
-		for _, planet := range game.Planets {
+		for _, planet := range g.Planets {
 			if planet.Name == pmv.PlanetName {
 				planet.Manager = nil
-				for _, manager := range game.Managers {
+				for _, manager := range g.Managers {
 					if manager.ID == pmv.ManagerID {
 						planet.Manager = manager
 						manager.Planet = planet
