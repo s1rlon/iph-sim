@@ -46,6 +46,7 @@ func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
 	planet := g.GetPlanetByName(planetName)
 	if planet != nil {
 		planet.ColonyLevel = colonyLevel
+		updatePlanetDB(DB, planet)
 	}
 }
 

@@ -29,6 +29,8 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 			rate *= (1 + 0.25*float64(planet.Manager.Stars))
 		}
 	}
+	//colony level
+	rate *= (1 + 0.3*float64(planet.ColonyLevel))
 	return rate
 }
 
