@@ -12,7 +12,7 @@
         tr:nth-child(even) { background-color: #222; }
         button { margin: 20px; padding: 10px 20px; font-size: 16px; }
         form { margin: 20px; }
-        input[type="number"] { padding: 5px; font-size: 16px; }
+        input[type="number"] { padding: 5px; font-size: 16px; width: 100%; }
         nav { background-color: #333; padding: 10px; }
         nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
     </style>
@@ -22,29 +22,89 @@
         <a href="/">Planets</a>
         <a href="/managers">Managers</a>
         <a href="/projects">Projects</a>
+        <a href="/rooms">Rooms</a>
+        <a href="/items">Items</a>
+        <a href="/market">Market</a>
+        <a href="/beacon">Beacon</a>
+        <a href="/ships">Ships</a>
     </nav>
     <h1>Projects</h1>
-    <table>
-        <tr>
-            <th>Project</th>
-            <th>Level</th>
-        </tr>
-        <tr>
-            <td>Telescope</td>
-            <td>{{.TelescopeLevel}}</td>
-        </tr>
-        <tr>
-            <td>Mining</td>
-            <td>{{.MiningLevel}}</td>
-        </tr>
-        <tr>
-            <td>Ship Speed</td>
-            <td>{{.ShipSpeedLevel}}</td>
-        </tr>
-        <tr>
-            <td>Ship Cargo</td>
-            <td>{{.ShipCargoLevel}}</td>
-        </tr>
-    </table>
+    <form action="/updateProjects" method="post">
+        <table>
+            <tr>
+                <th>Project</th>
+                <th>Level</th>
+            </tr>
+            <tr>
+                <td>Telescope</td>
+                <td><input type="number" name="TelescopeLevel" value="{{.TelescopeLevel}}"></td>
+            </tr>
+            <tr>
+                <td>Mining</td>
+                <td><input type="number" name="MiningLevel" value="{{.MiningLevel}}"></td>
+            </tr>
+            <tr>
+                <td>Ship Speed</td>
+                <td><input type="number" name="ShipSpeedLevel" value="{{.ShipSpeedLevel}}"></td>
+            </tr>
+            <tr>
+                <td>Ship Cargo</td>
+                <td><input type="number" name="ShipCargoLevel" value="{{.ShipCargoLevel}}"></td>
+            </tr>
+            <tr>
+                <td>Beacon</td>
+                <td><input type="number" name="Beacon" value="{{.Beacon}}"></td>
+            </tr>
+            <tr>
+                <td>Tax Level</td>
+                <td><input type="number" name="TaxLevel" value="{{.TaxLevel}}"></td>
+            </tr>
+            <tr>
+                <td>Smelt Speed</td>
+                <td><input type="number" name="SmeltSpeed" value="{{.SmeltSpeed}}"></td>
+            </tr>
+            <tr>
+                <td>Smelt Efficiency</td>
+                <td><input type="number" name="SmeltEff" value="{{.SmeltEff}}"></td>
+            </tr>
+            <tr>
+                <td>Alloy Value</td>
+                <td><input type="number" name="AlloyValue" value="{{.AlloyValue}}"></td>
+            </tr>
+            <tr>
+                <td>Craft Speed</td>
+                <td><input type="number" name="CraftSpeed" value="{{.CraftSpeed}}"></td>
+            </tr>
+            <tr>
+                <td>Craft Efficiency</td>
+                <td><input type="number" name="CraftEff" value="{{.CraftEff}}"></td>
+            </tr>
+            <tr>
+                <td>Item Value</td>
+                <td><input type="number" name="ItemValue" value="{{.ItemValue}}"></td>
+            </tr>
+            <tr>
+                <td>Preferred Vendor</td>
+                <td><input type="number" name="PrefVendor" value="{{.PrefVendor}}"></td>
+            </tr>
+            <tr>
+                <td>Ore Targeting</td>
+                <td><input type="number" name="OreTargeting" value="{{.OreTargeting}}"></td>
+            </tr>
+            <tr>
+                <td>Manager Training</td>
+                <td><input type="number" name="ManTraining" value="{{.ManTraining}}"></td>
+            </tr>
+            <tr>
+                <td>Manager Secondary Training</td>
+                <td><input type="number" name="ManSTraing" value="{{.ManSTraing}}"></td>
+            </tr>
+            <tr>
+                <td>Leader Training</td>
+                <td><input type="number" name="LeaderTraining" value="{{.LeaderTraining}}"></td>
+            </tr>
+        </table>
+        <button type="submit">Update Projects</button>
+    </form>
 </body>
 </html>

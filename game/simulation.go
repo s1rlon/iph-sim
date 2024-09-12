@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 func SimulateUpgrades(game *Game, steps int) {
 	// Update the last steps
 	game.LastSteps = steps
@@ -16,6 +18,7 @@ func SimulateUpgrades(game *Game, steps int) {
 				game.GamdeData.TotalMoneySpent += bestPlanet.getUpgradeCost()
 				game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, UpgradeHistory{game.GamdeData.CurrentStep, bestPlanet.Name, bestPlanet.getUpgradeCost(), bestROI, valueIncrease, game.GamdeData.TotalMoneySpent})
 				bestPlanet.upgradeMining()
+				game.GamdeData.UpgradeHistory[len(game.GamdeData.UpgradeHistory)-1].Planet = fmt.Sprintf("%s (%d/%d/%d)", bestPlanet.Name, bestPlanet.MiningLevel, bestPlanet.ShipSpeedLeve1, bestPlanet.ShipCargoLevel)
 			}
 		}
 		game.GamdeData.CurrentStep++

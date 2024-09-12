@@ -30,6 +30,8 @@ func main() {
 	routes.RegisterPlanetRoutes(r, gameInstance)
 	routes.RegisterManagerRoutes(r, gameInstance)
 	routes.RegisterProjectRoutes(r, gameInstance)
+	routes.RegisterMarketRoutes(r, gameInstance)
+	routes.RegisterMiscRoutes(r, gameInstance)
 
 	r.Run(":8080") // Start the server on port 8080
 }

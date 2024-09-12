@@ -44,7 +44,7 @@ func NewGame() *Game {
 	makeTables(db)
 
 	managers := getManagersFromDB(db)
-	projects := newProjects()
+	projects := loadProjectsFromDB(db)
 
 	return &Game{
 		Planets: []*Planet{
@@ -121,6 +121,7 @@ func (g *Game) ResetGalaxy() {
 	g.ResetManagers()
 	g.GamdeData.CurrentStep = 1
 	g.GamdeData.UpgradeHistory = []UpgradeHistory{}
+	g.Projects = newProjects()
 }
 
 func (g *Game) ResetPlanets() {
