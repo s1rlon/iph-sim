@@ -140,10 +140,10 @@ func loadProjectsFromDB(db *sql.DB) *Projects {
 
 func makeTables(db *sql.DB) error {
 	queries := []string{
-		`CREATE TABLE IF NOT EXISTS planets (id INTEGER PRIMARY KEY, name TEXT, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, colony_level INTEGER, locked INTEGER, alchemy_level INTEGER, rover INTEGER)`,
-		`CREATE TABLE IF NOT EXISTS managers (id INTEGER PRIMARY KEY, name TEXT, level INTEGER)`,
-		`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY, telescope_level INTEGER, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, beacon INTEGER, tax_level INTEGER, smelt_speed INTEGER, smelt_eff INTEGER, alloy_value INTEGER, craft_speed INTEGER, craft_eff INTEGER, item_value INTEGER, pref_vendor INTEGER, ore_targeting INTEGER, man_training INTEGER, man_straing INTEGER, leader_training INTEGER)`,
-		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
+		`CREATE TABLE IF NOT EXISTS planets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, colony_level INTEGER, locked INTEGER, alchemy_level INTEGER, rover INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS managers ( id INTEGER PRIMARY KEY AUTOINCREMENT, stars INTEGER, primary_role TEXT, secondary_role TEXT)`,
+		`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, telescope_level INTEGER, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, beacon INTEGER, tax_level INTEGER, smelt_speed INTEGER, smelt_eff INTEGER, alloy_value INTEGER, craft_speed INTEGER, craft_eff INTEGER, item_value INTEGER, pref_vendor INTEGER, ore_targeting INTEGER, man_training INTEGER, man_straing INTEGER, leader_training INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY AUTOINCREMENT, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
 	}
 
 	for _, query := range queries {
