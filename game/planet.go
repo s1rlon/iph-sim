@@ -15,6 +15,7 @@ type Planet struct {
 	Distance       float64
 	Locked         bool
 	Manager        *Manager
+	Rover          bool
 }
 
 func NewPlanet(name string, ores []Ore, distribution []float64, unlockCost int, distance float64) *Planet {

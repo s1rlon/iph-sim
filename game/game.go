@@ -16,19 +16,6 @@ type Game struct {
 	Ships     *Ships
 }
 
-type GameData struct {
-	UpgradeHistory []UpgradeHistory
-}
-
-type UpgradeHistory struct {
-	Stepnum       int
-	Planet        string
-	Upgradecost   float64
-	Roitime       float64
-	ValueIncrease float64
-	TotalSpend    float64
-}
-
 var GlobalCalcer *Calcer
 var DB *sql.DB
 
@@ -39,6 +26,7 @@ func NewGame() *Game {
 	}
 
 	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}}
+	gameData.LoadUpgradeHistoryFromDB(db)
 
 	makeTables(db)
 
@@ -120,7 +108,7 @@ func (g *Game) InitData() {
 func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
-	g.GamdeData.UpgradeHistory = []UpgradeHistory{}
+	g.GamdeData.resetGameData()
 	g.Projects = newProjects()
 }
 

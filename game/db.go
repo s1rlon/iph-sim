@@ -6,7 +6,7 @@ import (
 )
 
 func resetPlanetDB(db *sql.DB, planet *Planet) {
-	_, err := db.Exec("UPDATE planets SET mining_level = 1, ship_speed_level = 1, ship_cargo_level = 1, colony_level = 0, locked = 1, alchemy_level = 1 WHERE name = ?", planet.Name)
+	_, err := db.Exec("UPDATE planets SET mining_level = 1, ship_speed_level = 1, ship_cargo_level = 1, colony_level = 0, locked = 1, alchemy_level = 1, rover = 0 WHERE name = ?", planet.Name)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -20,14 +20,21 @@ func updatePlanetDB(db *sql.DB, planet *Planet) {
 		locked = 0
 	}
 
+	var rover int
+	if planet.Rover {
+		rover = 1
+	} else {
+		rover = 0
+	}
+
 	query := `
-        INSERT OR REPLACE INTO planets (
-            id, name, mining_level, ship_speed_level, ship_cargo_level, colony_level, locked, alchemy_level
-        ) VALUES (
-            (SELECT id FROM planets WHERE name = ?), ?, ?, ?, ?, ?, ?, ?
-        )
-    `
-	_, err := db.Exec(query, planet.Name, planet.Name, planet.MiningLevel, planet.ShipSpeedLeve1, planet.ShipCargoLevel, planet.ColonyLevel, locked, planet.AlchemyLevel)
+			INSERT OR REPLACE INTO planets (
+					id, name, mining_level, ship_speed_level, ship_cargo_level, colony_level, locked, alchemy_level, rover
+			) VALUES (
+					(SELECT id FROM planets WHERE name = ?), ?, ?, ?, ?, ?, ?, ?, ?
+			)
+	`
+	_, err := db.Exec(query, planet.Name, planet.Name, planet.MiningLevel, planet.ShipSpeedLeve1, planet.ShipCargoLevel, planet.ColonyLevel, locked, planet.AlchemyLevel, rover)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +72,7 @@ func getManagersFromDB(db *sql.DB) []*Manager {
 }
 
 func getPlanetsFromDB(db *sql.DB) ([]Planet, error) {
-	rows, err := db.Query("SELECT id, name, mining_level, ship_speed_level, ship_cargo_level, colony_level, locked, alchemy_level FROM planets")
+	rows, err := db.Query("SELECT id, name, mining_level, ship_speed_level, ship_cargo_level, colony_level, locked, alchemy_level, rover FROM planets")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,8 +88,9 @@ func getPlanetsFromDB(db *sql.DB) ([]Planet, error) {
 		var colony_level int
 		var locked int
 		var alchemy_level int
+		var rover int
 
-		err = rows.Scan(&id, &name, &mining_level, &ship_speed_level, &ship_cargo_level, &colony_level, &locked, &alchemy_level)
+		err = rows.Scan(&id, &name, &mining_level, &ship_speed_level, &ship_cargo_level, &colony_level, &locked, &alchemy_level, &rover)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -93,6 +101,13 @@ func getPlanetsFromDB(db *sql.DB) ([]Planet, error) {
 			lockedBool = false
 		}
 
+		var roverBool bool
+		if rover == 1 {
+			roverBool = true
+		} else {
+			roverBool = false
+		}
+
 		planet := Planet{
 			Name:           name,
 			MiningLevel:    mining_level,
@@ -101,6 +116,7 @@ func getPlanetsFromDB(db *sql.DB) ([]Planet, error) {
 			ColonyLevel:    colony_level,
 			Locked:         lockedBool,
 			AlchemyLevel:   alchemy_level,
+			Rover:          roverBool,
 		}
 		dbPlanets = append(dbPlanets, planet)
 	}
@@ -123,54 +139,19 @@ func loadProjectsFromDB(db *sql.DB) *Projects {
 }
 
 func makeTables(db *sql.DB) error {
-	managerSQL := `CREATE TABLE IF NOT EXISTS managers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        stars INTEGER,
-        primary_role TEXT,
-        secondary_role TEXT
-    );`
+	queries := []string{
+		`CREATE TABLE IF NOT EXISTS planets (id INTEGER PRIMARY KEY, name TEXT, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, colony_level INTEGER, locked INTEGER, alchemy_level INTEGER, rover INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS managers (id INTEGER PRIMARY KEY, name TEXT, level INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY, telescope_level INTEGER, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, beacon INTEGER, tax_level INTEGER, smelt_speed INTEGER, smelt_eff INTEGER, alloy_value INTEGER, craft_speed INTEGER, craft_eff INTEGER, item_value INTEGER, pref_vendor INTEGER, ore_targeting INTEGER, man_training INTEGER, man_straing INTEGER, leader_training INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
+	}
 
-	_, err := db.Exec(managerSQL)
-	if err != nil {
-		return err
+	for _, query := range queries {
+		_, err := db.Exec(query)
+		if err != nil {
+			return err
+		}
 	}
-	planetSQL := `CREATE TABLE IF NOT EXISTS planets (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name TEXT,
-				mining_level INTEGER,
-				ship_speed_level INTEGER,
-				ship_cargo_level INTEGER,
-				locked INTEGER,
-				colony_level INTEGER,
-				alchemy_level INTEGER
-			);`
-	_, err = db.Exec(planetSQL)
-	if err != nil {
-		return err
-	}
-	projectSQL := `CREATE TABLE IF NOT EXISTS projects (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				telescope_level INTEGER,
-				mining_level INTEGER,
-				ship_speed_level INTEGER,
-				ship_cargo_level INTEGER,
-				beacon INTEGER,
-				tax_level INTEGER,
-				smelt_speed INTEGER,
-				smelt_eff INTEGER,
-				alloy_value INTEGER,
-				craft_speed INTEGER,
-				craft_eff INTEGER,
-				item_value INTEGER,
-				pref_vendor INTEGER,
-				ore_targeting INTEGER,
-				man_training INTEGER,
-				man_straing INTEGER,
-				leader_training INTEGER
-		);`
-	_, err = db.Exec(projectSQL)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
