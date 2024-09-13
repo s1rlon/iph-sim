@@ -87,7 +87,7 @@ func (p *Planet) getMinedOresValue(level int) float64 {
 	minedOres := p.Mine(level)
 	value := 0.0
 	for ore, amount := range minedOres {
-		value += amount * MarketSVC.GetOreValue(ore)
+		value += amount * ore.getValue()
 	}
 	return value
 }

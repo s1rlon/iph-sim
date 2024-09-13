@@ -7,8 +7,20 @@ type Alloy struct {
 	BaseTime float64
 }
 
-func (a *Alloy) GetName() string {
+func (a *Alloy) getName() string {
 	return a.Name
+}
+
+func (a *Alloy) getBaseValue() float64 {
+	return a.Value
+}
+
+func (a *Alloy) getStars() int {
+	return MarketSVC.getStars(a)
+}
+
+func (a *Alloy) getValue() float64 {
+	return MarketSVC.getValue(a)
 }
 
 func createAlloys() []*Alloy {

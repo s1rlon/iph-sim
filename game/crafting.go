@@ -1,7 +1,9 @@
 package game
 
 type Craftable interface {
-	GetName() string
+	getName() string
+	getBaseValue() float64
+	getStars() int
 }
 
 type Recepie struct {

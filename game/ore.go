@@ -30,8 +30,16 @@ func createOres() []*Ore {
 	}
 }
 
-func (o *Ore) GetName() string {
+func (o *Ore) getName() string {
 	return o.Name
+}
+
+func (o *Ore) getBaseValue() float64 {
+	return o.Value
+}
+
+func (o *Ore) getStars() int {
+	return MarketSVC.getStars(o)
 }
 
 func getOres(ores []*Ore, names ...string) []*Ore {
@@ -54,6 +62,10 @@ func getOre(name string, game *Game) *Ore {
 		}
 	}
 	return nil
+}
+
+func (o *Ore) getValue() float64 {
+	return MarketSVC.getValue(o)
 }
 
 func (g *Game) getOre(name string) *Ore {

@@ -34,12 +34,6 @@ type ItemData struct {
 	CurrentTime float64
 }
 
-func (m *Market) GetOreValue(ore *Ore) float64 {
-	base := ore.Value
-	value := base * (1 + 0.2*float64(m.OreStars[ore]))
-	return value
-}
-
 func (g *Game) GenerateMarketHTML() MarketData {
 
 	ores := []OreData{}
@@ -47,9 +41,9 @@ func (g *Game) GenerateMarketHTML() MarketData {
 		ores = append(ores, OreData{
 			Name:        ore.Name,
 			Value:       ore.Value,
-			Stars:       MarketSVC.OreStars[ore],
+			Stars:       ore.getStars(),
 			MarketTrend: 1.0, // Default market value
-			SellValue:   MarketSVC.GetOreValue(ore),
+			SellValue:   ore.getValue(),
 		})
 	}
 
@@ -58,9 +52,9 @@ func (g *Game) GenerateMarketHTML() MarketData {
 		alloys = append(alloys, AlloyData{
 			Name:        alloy.Name,
 			Value:       alloy.Value,
-			Stars:       0,           // Default stars
-			MarketTrend: 1.0,         // Default market value
-			SellValue:   alloy.Value, // Assuming sell value is the same as base value
+			Stars:       alloy.getStars(), // Default stars
+			MarketTrend: 1.0,              // Default market value
+			SellValue:   alloy.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    alloy.BaseTime,
 			CurrentTime: alloy.BaseTime,
 		})
@@ -71,9 +65,9 @@ func (g *Game) GenerateMarketHTML() MarketData {
 		items = append(items, ItemData{
 			Name:        item.Name,
 			Value:       item.Value,
-			Stars:       0,          // Default stars
-			MarketTrend: 1.0,        // Default market value
-			SellValue:   item.Value, // Assuming sell value is the same as base value
+			Stars:       item.getStars(), // Default stars
+			MarketTrend: 1.0,             // Default market value
+			SellValue:   item.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    item.BaseTime,
 			CurrentTime: item.BaseTime,
 		})

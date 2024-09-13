@@ -18,6 +18,7 @@ type Game struct {
 	Recepies  []*Recepie
 	Alloys    []*Alloy
 	Items     []*Item
+	Rooms     *Rooms
 }
 
 var GlobalCalcer *Calcer
@@ -42,6 +43,7 @@ func NewGame() *Game {
 	projects := loadProjectsFromDB(db)
 	ships := NewShips()
 	planets := makeNewPlanets(ores)
+	rooms := loadRoomsFromDB(db)
 
 	return &Game{
 		Planets:   planets,
@@ -54,6 +56,7 @@ func NewGame() *Game {
 		Ores:      ores,
 		Alloys:    alloys,
 		Items:     items,
+		Rooms:     rooms,
 	}
 }
 
@@ -104,6 +107,28 @@ func (g *Game) moneySpent() float64 {
 	return total
 }
 
-func (g *Game) currentStep() int {
-	return len(g.GamdeData.UpgradeHistory)
+func (g *Game) getCratablebyName(name string) Craftable {
+	for _, ore := range g.Ores {
+		if ore.getName() == name {
+			return ore
+		}
+	}
+	for _, alloy := range g.Alloys {
+		if alloy.getName() == name {
+			return alloy
+		}
+	}
+	for _, item := range g.Items {
+		if item.getName() == name {
+			return item
+		}
+	}
+	return nil
+}
+
+func (g *Game) SetStars(name string, stars int) {
+	item := g.getCratablebyName(name)
+	if item != nil {
+		MarketSVC.saveStars(item, stars)
+	}
 }

@@ -66,8 +66,8 @@ func (game *Game) CreateTableData() TableData {
 			uniqueOres[ore.Name] = true
 			totalMined[ore.Name] += amount
 			totalPerPlanet[planet.Name] += amount
-			totalValuePerPlanet[planet.Name] += amount * MarketSVC.GetOreValue(ore)
-			totalValue += amount * MarketSVC.GetOreValue(ore)
+			totalValuePerPlanet[planet.Name] += amount * ore.getValue()
+			totalValue += amount * ore.getValue()
 		}
 	}
 

@@ -14,7 +14,32 @@ func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 	})
 
 	r.GET("/rooms", func(c *gin.Context) {
-		c.HTML(200, "rooms.html", nil)
+		c.HTML(200, "rooms.html", gameInstance.Rooms)
+	})
+
+	r.POST("/updateRooms", func(c *gin.Context) {
+		rooms := &game.Rooms{
+			Engineering:     parseFormValue(c, "Engineering"),
+			Aeronautical:    parseFormValue(c, "Aeronautical"),
+			Packaging:       parseFormValue(c, "Packaging"),
+			Forge:           parseFormValue(c, "Forge"),
+			Workshop:        parseFormValue(c, "Workshop"),
+			Astronomy:       parseFormValue(c, "Astronomy"),
+			Laboratory:      parseFormValue(c, "Laboratory"),
+			Terrarium:       parseFormValue(c, "Terrarium"),
+			Lounge:          parseFormValue(c, "Lounge"),
+			Robotics:        parseFormValue(c, "Robotics"),
+			BackupGenerator: parseFormValue(c, "BackupGenerator"),
+			Underforge:      parseFormValue(c, "Underforge"),
+			Dorm:            parseFormValue(c, "Dorm"),
+			Sales:           parseFormValue(c, "Sales"),
+			Classroom:       parseFormValue(c, "Classroom"),
+			Marketing:       parseFormValue(c, "Marketing"),
+		}
+
+		gameInstance.UpdateRooms(rooms)
+
+		c.Redirect(http.StatusSeeOther, "/rooms")
 	})
 
 	r.GET("/ships", func(c *gin.Context) {

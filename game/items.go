@@ -7,8 +7,20 @@ type Item struct {
 	BaseTime float64
 }
 
-func (i *Item) GetName() string {
+func (i *Item) getName() string {
 	return i.Name
+}
+
+func (i *Item) getBaseValue() float64 {
+	return i.Value
+}
+
+func (i *Item) getStars() int {
+	return MarketSVC.getStars(i)
+}
+
+func (i *Item) getValue() float64 {
+	return MarketSVC.getValue(i)
 }
 
 func createItems() []*Item {

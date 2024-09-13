@@ -21,8 +21,7 @@ func RegisterMarketRoutes(r *gin.Engine, gameInstance *game.Game) {
 		if err != nil {
 			fmt.Println("Error converting stars to int")
 		}
-		fmt.Println(c.PostForm("oreName"))
-		fmt.Println(stars)
+		gameInstance.SetStars(c.PostForm("oreName"), stars)
 		data := gameInstance.GenerateMarketHTML()
 		c.HTML(200, "market.html", data)
 	})
