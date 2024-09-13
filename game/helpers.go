@@ -23,13 +23,6 @@ func Add(a, b int) int {
 	return a + b
 }
 
-func GetOreValue(oreName string) float64 {
-	if value, exists := OreValues[oreName]; exists {
-		return value
-	}
-	return 0.0
-}
-
 func FormatTime(seconds float64) string {
 	hours := int(seconds) / 3600
 	minutes := (int(seconds) % 3600) / 60

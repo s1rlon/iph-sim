@@ -52,7 +52,7 @@ func (game *Game) CreateTableData() TableData {
 	}
 
 	// Collect mining data after upgrades
-	miningData := make(map[string]map[string]float64)
+	miningData := make(map[string]map[*Ore]float64)
 	uniqueOres := make(map[string]bool)
 	totalMined := make(map[string]float64)
 	totalPerPlanet := make(map[string]float64)
@@ -63,21 +63,13 @@ func (game *Game) CreateTableData() TableData {
 		minedOres := planet.Mine(planet.MiningLevel)
 		miningData[planet.Name] = minedOres
 		for ore, amount := range minedOres {
-			uniqueOres[ore] = true
-			totalMined[ore] += amount
+			uniqueOres[ore.Name] = true
+			totalMined[ore.Name] += amount
 			totalPerPlanet[planet.Name] += amount
-			totalValuePerPlanet[planet.Name] += amount * OreValues[ore]
-			totalValue += amount * OreValues[ore]
+			totalValuePerPlanet[planet.Name] += amount * MarketSVC.GetOreValue(ore)
+			totalValue += amount * MarketSVC.GetOreValue(ore)
 		}
 	}
-
-	var sortedOres []OreValue
-	for ore := range uniqueOres {
-		sortedOres = append(sortedOres, OreValue{Name: ore, Value: OreValues[ore]})
-	}
-	sort.Slice(sortedOres, func(i, j int) bool {
-		return sortedOres[i].Value < sortedOres[j].Value
-	})
 
 	// Prepare data for template
 	var planetData []PlanetData
@@ -98,12 +90,23 @@ func (game *Game) CreateTableData() TableData {
 		}
 	}
 
+	var ores []*Ore
+	for oreName := range uniqueOres {
+		ore := getOre(oreName, game)
+		if ore != nil {
+			ores = append(ores, ore)
+		}
+	}
+	sort.Slice(ores, func(i, j int) bool {
+		return ores[i].Value < ores[j].Value
+	})
+
 	var oreData []OreData
-	for _, ore := range sortedOres {
+	for _, ore := range ores {
 		var amounts []float64
 		for _, planet := range game.Planets {
 			if !planet.Locked {
-				if amount, ok := miningData[planet.Name][ore.Name]; ok {
+				if amount, ok := miningData[planet.Name][ore]; ok {
 					amounts = append(amounts, amount)
 				} else {
 					amounts = append(amounts, 0)

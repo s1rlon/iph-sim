@@ -40,15 +40,15 @@ func (p *Planet) getMiningRate(level int) float64 {
 	return GlobalCalcer.planetCalcer.getMiningRate(p, levelFloat)
 }
 
-func (p *Planet) Mine(level int) map[string]float64 {
-	minedOres := make(map[string]float64)
+func (p *Planet) Mine(level int) map[*Ore]float64 {
+	minedOres := make(map[*Ore]float64)
 	if p.Locked && level == p.MiningLevel {
 		return minedOres
 	}
 	miningRate := p.getMiningRate(level)
 	for i, ore := range p.Ores {
 		minedAmount := miningRate * p.Distribution[i]
-		minedOres[ore.Name] = minedAmount
+		minedOres[ore] = minedAmount
 	}
 	return minedOres
 }
@@ -87,7 +87,7 @@ func (p *Planet) getMinedOresValue(level int) float64 {
 	minedOres := p.Mine(level)
 	value := 0.0
 	for ore, amount := range minedOres {
-		value += amount * GetOreValue(ore)
+		value += amount * MarketSVC.GetOreValue(ore)
 	}
 	return value
 }

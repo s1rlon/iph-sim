@@ -19,6 +19,7 @@ type Game struct {
 
 var GlobalCalcer *Calcer
 var DB *sql.DB
+var MarketSVC *Market
 
 func NewGame() *Game {
 	db, err := sql.Open("sqlite3", "ipm.sql")
@@ -51,6 +52,7 @@ func NewGame() *Game {
 
 func (g *Game) InitData() {
 	GlobalCalcer = NewCalcer(g)
+	MarketSVC = NewMarket(g)
 	DB = g.db
 	dbPlanets, _ := getPlanetsFromDB(g.db)
 	for _, planet := range g.Planets {
