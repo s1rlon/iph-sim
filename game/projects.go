@@ -54,7 +54,7 @@ func (g *Game) saveProjectsToDB(p *Projects) {
 	query := `
 			INSERT INTO projects (
 					telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, smelt_spec, craft_speed, craft_eff, item_value, craft_spec ,pref_vendor, ore_targeting, man_training, man_straing, leader_training
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	_, err := g.db.Exec(query, p.TelescopeLevel, p.MiningLevel, p.ShipSpeedLevel, p.ShipCargoLevel, p.Beacon, p.TaxLevel, p.SmeltSpeed, p.SmeltEff, p.AlloyValue, p.SmeltSpec, p.CraftSpeed, p.CraftEff, p.ItemValue, p.CraftSpec, p.PrefVendor, p.OreTargeting, p.ManTraining, p.ManSTraing, p.LeaderTraining)
 	if err != nil {
