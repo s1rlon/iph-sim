@@ -14,9 +14,11 @@ type Projects struct {
 	SmeltSpeed     int // speed 0-1-2
 	SmeltEff       int // input reduc 20
 	AlloyValue     int
+	SmeltSpec      int
 	CraftSpeed     int
 	CraftEff       int
 	ItemValue      int
+	CraftSpec      int
 	PrefVendor     int
 	OreTargeting   int
 	ManTraining    int
@@ -35,9 +37,11 @@ func newProjects() *Projects {
 		SmeltSpeed:     0,
 		SmeltEff:       0,
 		AlloyValue:     0,
+		SmeltSpec:      0,
 		CraftSpeed:     0,
 		CraftEff:       0,
 		ItemValue:      0,
+		CraftSpec:      0,
 		PrefVendor:     0,
 		OreTargeting:   0,
 		ManTraining:    0,
@@ -49,10 +53,10 @@ func newProjects() *Projects {
 func (g *Game) saveProjectsToDB(p *Projects) {
 	query := `
 			INSERT INTO projects (
-					telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, craft_speed, craft_eff, item_value, pref_vendor, ore_targeting, man_training, man_straing, leader_training
+					telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, smelt_spec, craft_speed, craft_eff, item_value, craft_spec ,pref_vendor, ore_targeting, man_training, man_straing, leader_training
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
-	_, err := g.db.Exec(query, p.TelescopeLevel, p.MiningLevel, p.ShipSpeedLevel, p.ShipCargoLevel, p.Beacon, p.TaxLevel, p.SmeltSpeed, p.SmeltEff, p.AlloyValue, p.CraftSpeed, p.CraftEff, p.ItemValue, p.PrefVendor, p.OreTargeting, p.ManTraining, p.ManSTraing, p.LeaderTraining)
+	_, err := g.db.Exec(query, p.TelescopeLevel, p.MiningLevel, p.ShipSpeedLevel, p.ShipCargoLevel, p.Beacon, p.TaxLevel, p.SmeltSpeed, p.SmeltEff, p.AlloyValue, p.SmeltSpec, p.CraftSpeed, p.CraftEff, p.ItemValue, p.CraftSpec, p.PrefVendor, p.OreTargeting, p.ManTraining, p.ManSTraing, p.LeaderTraining)
 	if err != nil {
 		log.Fatal(err)
 	}

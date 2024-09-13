@@ -124,11 +124,11 @@ func getPlanetsFromDB(db *sql.DB) ([]Planet, error) {
 }
 
 func loadProjectsFromDB(db *sql.DB) *Projects {
-	query := `SELECT telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, craft_speed, craft_eff, item_value, pref_vendor, ore_targeting, man_training, man_straing, leader_training FROM projects ORDER BY id DESC LIMIT 1`
+	query := `SELECT telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, smelt_spec ,craft_speed, craft_eff, item_value, craft_spec ,pref_vendor, ore_targeting, man_training, man_straing, leader_training FROM projects ORDER BY id DESC LIMIT 1`
 	row := db.QueryRow(query)
 
 	p := newProjects()
-	err := row.Scan(&p.TelescopeLevel, &p.MiningLevel, &p.ShipSpeedLevel, &p.ShipCargoLevel, &p.Beacon, &p.TaxLevel, &p.SmeltSpeed, &p.SmeltEff, &p.AlloyValue, &p.CraftSpeed, &p.CraftEff, &p.ItemValue, &p.PrefVendor, &p.OreTargeting, &p.ManTraining, &p.ManSTraing, &p.LeaderTraining)
+	err := row.Scan(&p.TelescopeLevel, &p.MiningLevel, &p.ShipSpeedLevel, &p.ShipCargoLevel, &p.Beacon, &p.TaxLevel, &p.SmeltSpeed, &p.SmeltEff, &p.AlloyValue, &p.SmeltSpec, &p.CraftSpeed, &p.CraftEff, &p.ItemValue, &p.CraftSpec, &p.PrefVendor, &p.OreTargeting, &p.ManTraining, &p.ManSTraing, &p.LeaderTraining)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return newProjects()
@@ -142,7 +142,7 @@ func makeTables(db *sql.DB) error {
 	queries := []string{
 		`CREATE TABLE IF NOT EXISTS planets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, colony_level INTEGER, locked INTEGER, alchemy_level INTEGER, rover INTEGER)`,
 		`CREATE TABLE IF NOT EXISTS managers ( id INTEGER PRIMARY KEY AUTOINCREMENT, stars INTEGER, primary_role TEXT, secondary_role TEXT)`,
-		`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, telescope_level INTEGER, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, beacon INTEGER, tax_level INTEGER, smelt_speed INTEGER, smelt_eff INTEGER, alloy_value INTEGER, craft_speed INTEGER, craft_eff INTEGER, item_value INTEGER, pref_vendor INTEGER, ore_targeting INTEGER, man_training INTEGER, man_straing INTEGER, leader_training INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, telescope_level INTEGER, mining_level INTEGER, ship_speed_level INTEGER, ship_cargo_level INTEGER, beacon INTEGER, tax_level INTEGER, smelt_speed INTEGER, smelt_eff INTEGER, alloy_value INTEGER, smelt_spec INTEGER ,craft_speed INTEGER, craft_eff INTEGER, item_value INTEGER, craft_spec INTEGER, pref_vendor INTEGER, ore_targeting INTEGER, man_training INTEGER, man_straing INTEGER, leader_training INTEGER)`,
 		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY AUTOINCREMENT, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
 	}
 
