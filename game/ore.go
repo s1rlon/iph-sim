@@ -5,8 +5,8 @@ type Ore struct {
 	Value float64
 }
 
-func createOres() *[]*Ore {
-	return &[]*Ore{
+func createOres() []*Ore {
+	return []*Ore{
 		{Name: "Copper", Value: 1.0},
 		{Name: "Iron", Value: 2.0},
 		{Name: "Lead", Value: 4.0},
@@ -30,10 +30,14 @@ func createOres() *[]*Ore {
 	}
 }
 
-func getOres(ores *[]*Ore, names ...string) []*Ore {
+func (o *Ore) GetName() string {
+	return o.Name
+}
+
+func getOres(ores []*Ore, names ...string) []*Ore {
 	var result []*Ore
 	for _, name := range names {
-		for _, ore := range *ores {
+		for _, ore := range ores {
 			if ore.Name == name {
 				result = append(result, ore)
 				break
@@ -44,10 +48,14 @@ func getOres(ores *[]*Ore, names ...string) []*Ore {
 }
 
 func getOre(name string, game *Game) *Ore {
-	for _, ore := range *game.Ores {
+	for _, ore := range game.Ores {
 		if ore.Name == name {
 			return ore
 		}
 	}
 	return nil
+}
+
+func (g *Game) getOre(name string) *Ore {
+	return getOre(name, g)
 }

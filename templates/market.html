@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Projects</title>
+    <title>Market</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 30%; border-collapse: collapse; margin: 10px; float: left; }
         th, td { border: 1px solid #444; padding: 8px; text-align: left; }
         th { background-color: #333; }
         tr:nth-child(even) { background-color: #222; }
         button { margin: 20px; padding: 10px 20px; font-size: 16px; }
         form { margin: 20px; }
-        input[type="number"] { padding: 5px; font-size: 16px; width: 100%; }
+        input[type="number"], select { padding: 5px; font-size: 16px; width: 100%; }
         nav { background-color: #333; padding: 10px; }
         nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
     </style>
@@ -28,6 +28,144 @@
     <a href="/beacon">Beacon</a>
     <a href="/ships">Ships</a>
   </nav>
-    <h1>Market</h1>
+  <h1>Market</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Base Value</th>
+          <th>Stars</th>
+          <th>Market Value</th>
+          <th>Sell Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Ores}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{.Value}}</td>
+          <td>
+            <form action="/updateOreStars" method="post">
+              <input type="hidden" name="oreName" value="{{.Name}}">
+              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>
+            <form action="/updateOreMarket" method="post">
+              <input type="hidden" name="oreName" value="{{.Name}}">
+              <select name="marketTrend">
+                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
+                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
+                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
+                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
+                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
+                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
+                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
+              </select>
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>{{.SellValue}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Base Value</th>
+          <th>Base Build</th>
+          <th>Stars</th>
+          <th>Market Value</th>
+          <th>Sell Value</th>
+          <th>Current Build</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Alloys}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{.Value}}</td>
+          <td>{{.BaseTime}}</td>
+          <td>
+            <form action="/updateAlloyStars" method="post">
+              <input type="hidden" name="alloyName" value="{{.Name}}">
+              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>
+            <form action="/updateAlloyMarket" method="post">
+              <input type="hidden" name="alloyName" value="{{.Name}}">
+              <select name="marketTrend">
+                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
+                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
+                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
+                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
+                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
+                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
+                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
+              </select>
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>{{.SellValue}}</td>
+          <td>{{.CurrentTime}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Base Value</th>
+          <th>Base Build</th>
+          <th>Stars</th>
+          <th>Market Value</th>
+          <th>Sell Value</th>
+          <th>Current Build</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Items}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{.Value}}</td>
+          <td>{{.BaseTime}}</td>
+          <td>
+            <form action="/updateItemStars" method="post">
+              <input type="hidden" name="itemName" value="{{.Name}}">
+              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>
+            <form action="/updateItemMarket" method="post">
+              <input type="hidden" name="itemName" value="{{.Name}}">
+              <select name="marketTrend">
+                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
+                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
+                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
+                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
+                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
+                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
+                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
+              </select>
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>{{.SellValue}}</td>
+          <td>{{.CurrentTime}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>

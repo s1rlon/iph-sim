@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-type OreData struct {
+type OreDatas struct {
 	Name    string
 	Amounts []float64
 	Total   float64
@@ -25,7 +25,7 @@ type PlanetData struct {
 
 type TableData struct {
 	Planets                  []PlanetData
-	Ores                     []OreData
+	Ores                     []OreDatas
 	TotalValue               float64
 	LastSteps                int
 	NextUpgradePlanet        *PlanetData
@@ -101,7 +101,7 @@ func (game *Game) CreateTableData() TableData {
 		return ores[i].Value < ores[j].Value
 	})
 
-	var oreData []OreData
+	var oreData []OreDatas
 	for _, ore := range ores {
 		var amounts []float64
 		for _, planet := range game.Planets {
@@ -113,7 +113,7 @@ func (game *Game) CreateTableData() TableData {
 				}
 			}
 		}
-		oreData = append(oreData, OreData{
+		oreData = append(oreData, OreDatas{
 			Name:    ore.Name,
 			Amounts: amounts,
 			Total:   totalMined[ore.Name],

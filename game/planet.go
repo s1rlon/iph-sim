@@ -180,7 +180,7 @@ func NewPlanet(name string, ores []*Ore, distribution []float64, unlockCost int,
 	}
 }
 
-func makeNewPlanets(ores *[]*Ore) []*Planet {
+func makeNewPlanets(ores []*Ore) []*Planet {
 
 	return []*Planet{
 		NewPlanet("Balor", getOres(ores, "Copper"), []float64{1.0}, 100, 15),

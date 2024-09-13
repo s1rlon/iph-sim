@@ -14,7 +14,10 @@ type Game struct {
 	db        *sql.DB
 	GamdeData *GameData
 	Ships     *Ships
-	Ores      *[]*Ore
+	Ores      []*Ore
+	Recepies  []*Recepie
+	Alloys    []*Alloy
+	Items     []*Item
 }
 
 var GlobalCalcer *Calcer
@@ -32,6 +35,8 @@ func NewGame() *Game {
 
 	makeTables(db)
 	ores := createOres()
+	alloys := createAlloys()
+	items := createItems()
 
 	managers := getManagersFromDB(db)
 	projects := loadProjectsFromDB(db)
@@ -47,12 +52,15 @@ func NewGame() *Game {
 		GamdeData: gameData,
 		Ships:     ships,
 		Ores:      ores,
+		Alloys:    alloys,
+		Items:     items,
 	}
 }
 
 func (g *Game) InitData() {
 	GlobalCalcer = NewCalcer(g)
 	MarketSVC = NewMarket(g)
+	g.Recepies = createRecepies(g)
 	DB = g.db
 	dbPlanets, _ := getPlanetsFromDB(g.db)
 	for _, planet := range g.Planets {
