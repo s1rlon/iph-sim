@@ -87,7 +87,7 @@
         </tr>
     </table>
     {{if .NextUpgradePlanet}}
-    <p>Next planet to upgrade: {{.NextUpgradePlanet.Name}} (Current Mining Level: {{.NextUpgradePlanet.MiningLevel}}, Upgrade Cost: {{formatNumber .NextUpgradePlanet.UpgradeCost}}, Value Added: {{formatNumber .NextUpgradeValueIncrease}})</p>
+    <p>Next planet to upgrade: {{.NextUpgradePlanet.Name}} (Current Mining Level: {{.NextUpgradePlanet.MiningLevel}}, Upgrade Cost: {{formatNumber .NextUpgradePlanet.UpgradeCost}}, Value Added: {{formatNumber .NextUpgradeValueIncrease}} and ROI: {{formatTime .NextUpgradeROI}})</p>
     {{else}}
     <p>No planet available for upgrade.</p>
     {{end}}

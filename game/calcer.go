@@ -38,7 +38,8 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	projects := 1.0
 	managers := 1.0
-	rooms := 1.0
+	//Rooms
+	rooms := 1 + (0.25 * float64(p.game.Rooms.Engineering))
 	//Ships
 	ships := 1.0
 	if p.game.Ships.AdShip {

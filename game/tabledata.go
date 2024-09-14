@@ -30,13 +30,14 @@ type TableData struct {
 	LastSteps                int
 	NextUpgradePlanet        *PlanetData
 	NextUpgradeValueIncrease float64
+	NextUpgradeROI           float64
 	TotalMoneySpent          float64
 	UpgradeHistory           []UpgradeHistory
 }
 
 func (game *Game) CreateTableData() TableData {
 	// Determine the next planet to upgrade
-	nextPlanet, _, nextValueIncrease := game.bestUpgradeValue()
+	nextPlanet, nextROI, nextValueIncrease := game.bestUpgradeValue()
 	var nextUpgradePlanet *PlanetData
 	if nextPlanet != nil {
 		nextUpgradePlanet = &PlanetData{
@@ -131,6 +132,7 @@ func (game *Game) CreateTableData() TableData {
 		LastSteps:                game.LastSteps,
 		NextUpgradePlanet:        nextUpgradePlanet,
 		NextUpgradeValueIncrease: nextValueIncrease,
+		NextUpgradeROI:           nextROI,
 		TotalMoneySpent:          game.moneySpent(),
 		UpgradeHistory:           game.GamdeData.UpgradeHistory,
 	}
