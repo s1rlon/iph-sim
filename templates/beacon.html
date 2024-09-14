@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 15%; border-collapse: collapse; }
         th, td { border: 1px solid #444; padding: 8px; text-align: left; }
         th { background-color: #333; }
         tr:nth-child(even) { background-color: #222; }
         button { margin: 20px; padding: 10px 20px; font-size: 16px; }
         form { margin: 20px; }
-        input[type="number"] { padding: 5px; font-size: 16px; width: 100%; }
+        input[type="number"] { padding: 5px; font-size: 16px; width: 100%; background-color: #333; color: #e0e0e0; border: 1px solid #444; }
         nav { background-color: #333; padding: 10px; }
         nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
     </style>
@@ -29,5 +29,49 @@
     <a href="/ships">Ships</a>
   </nav>
   <h1>Beacon</h1>
+  <form action="/updateBeaconLevels" method="post">
+    <table>
+      <thead>
+        <tr>
+          <th>Planets</th>
+          <th>Beacon Increase</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $index, $level := .Levels}}
+        <tr>
+          <td>
+            {{if eq $index 0}}Planets 1-4
+            {{else if eq $index 1}}Planets 5-7
+            {{else if eq $index 2}}Planets 8-10
+            {{else if eq $index 3}}Planets 11-13
+            {{else if eq $index 4}}Planets 14-16
+            {{else if eq $index 5}}Planets 17-19
+            {{else if eq $index 6}}Planets 20-22
+            {{else if eq $index 7}}Planets 23-25
+            {{else if eq $index 8}}Planets 26-28
+            {{else if eq $index 9}}Planets 29-31
+            {{else if eq $index 10}}Planets 32-34
+            {{else if eq $index 11}}Planets 35-37
+            {{else if eq $index 12}}Planets 38-40
+            {{else if eq $index 13}}Planets 41-43
+            {{else if eq $index 14}}Planets 44-46
+            {{else if eq $index 15}}Planets 47-49
+            {{else if eq $index 16}}Planets 50-52
+            {{else if eq $index 17}}Planets 53-55
+            {{else if eq $index 18}}Planets 56-58
+            {{else if eq $index 19}}Planets 59-61
+            {{else if eq $index 20}}Planets 62-64
+            {{end}}
+          </td>
+          <td>
+            <input type="number" name="levels[{{$index}}]" value="{{$level}}" step="0.02" min="1">
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    <button type="submit">Update Beacon Levels</button>
+  </form>
 </body>
 </html>

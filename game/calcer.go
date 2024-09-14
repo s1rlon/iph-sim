@@ -31,6 +31,9 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	}
 	//colony level
 	rate *= (1 + 0.3*float64(planet.ColonyLevel))
+	//beacon level
+	rate *= p.getBeaconLevel(planet)
+	//global bonus
 	rate *= p.getMiningGlobalBonus()
 	return rate
 }
@@ -39,7 +42,13 @@ func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	projects := 1.0
 	managers := 1.0
 	//Rooms
-	rooms := 1 + (0.25 * float64(p.game.Rooms.Engineering))
+	rooms := 1.0
+	if p.game.Rooms.Engineering > 0 {
+		rooms += 0.25
+		if p.game.Rooms.Engineering > 1 {
+			rooms += 0.15 * float64(p.game.Rooms.Engineering-1)
+		}
+	}
 	//Ships
 	ships := 1.0
 	if p.game.Ships.AdShip {
@@ -75,4 +84,52 @@ func (p *PlanetCalcer) getShipCargo(planet *Planet, level float64) float64 {
 	}
 
 	return rate
+}
+
+func (p *PlanetCalcer) getBeaconLevel(planet *Planet) float64 {
+	planetIndex := p.game.GetPlanetIndex(planet)
+	switch {
+	case planetIndex <= 3:
+		return p.game.Beacon.Levels[0]
+	case planetIndex <= 6:
+		return p.game.Beacon.Levels[1]
+	case planetIndex <= 9:
+		return p.game.Beacon.Levels[2]
+	case planetIndex <= 12:
+		return p.game.Beacon.Levels[3]
+	case planetIndex <= 15:
+		return p.game.Beacon.Levels[4]
+	case planetIndex <= 18:
+		return p.game.Beacon.Levels[5]
+	case planetIndex <= 21:
+		return p.game.Beacon.Levels[6]
+	case planetIndex <= 24:
+		return p.game.Beacon.Levels[7]
+	case planetIndex <= 27:
+		return p.game.Beacon.Levels[8]
+	case planetIndex <= 30:
+		return p.game.Beacon.Levels[9]
+	case planetIndex <= 33:
+		return p.game.Beacon.Levels[10]
+	case planetIndex <= 36:
+		return p.game.Beacon.Levels[11]
+	case planetIndex <= 39:
+		return p.game.Beacon.Levels[12]
+	case planetIndex <= 42:
+		return p.game.Beacon.Levels[13]
+	case planetIndex <= 45:
+		return p.game.Beacon.Levels[14]
+	case planetIndex <= 48:
+		return p.game.Beacon.Levels[15]
+	case planetIndex <= 51:
+		return p.game.Beacon.Levels[16]
+	case planetIndex <= 54:
+		return p.game.Beacon.Levels[17]
+	case planetIndex <= 57:
+		return p.game.Beacon.Levels[18]
+	case planetIndex <= 60:
+		return p.game.Beacon.Levels[19]
+	default:
+		return p.game.Beacon.Levels[20]
+	}
 }

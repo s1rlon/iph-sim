@@ -146,6 +146,7 @@ func makeTables(db *sql.DB) error {
 		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY AUTOINCREMENT, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
 		`CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY AUTOINCREMENT,engineering INTEGER,aeronautical INTEGER,packaging INTEGER,forge INTEGER,workshop INTEGER,astronomy INTEGER,laboratory INTEGER,terrarium INTEGER,lounge INTEGER,robotics INTEGER,backup_generator INTEGER,underforge INTEGER,dorm INTEGER,sales INTEGER,classroom INTEGER,marketing INTEGER)`,
 		`CREATE TABLE IF NOT EXISTS stars (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,stars INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS beacon (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,beacon TEXT)`,
 	}
 
 	for _, query := range queries {

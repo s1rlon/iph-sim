@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"sirlon.org/iph-sim/game"
@@ -47,7 +48,22 @@ func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 	})
 
 	r.GET("/beacon", func(c *gin.Context) {
-		c.HTML(200, "beacon.html", nil)
+		c.HTML(200, "beacon.html", gameInstance.Beacon)
+	})
+
+	r.POST("/updateBeaconLevels", func(c *gin.Context) {
+		var levels []float64
+		for i := 0; i < 21; i++ {
+			levelStr := c.PostForm("levels[" + strconv.Itoa(i) + "]")
+			level, err := strconv.ParseFloat(levelStr, 64)
+			if err != nil {
+				c.String(http.StatusBadRequest, "Invalid level value")
+				return
+			}
+			levels = append(levels, level)
+		}
+		gameInstance.UpdateBeacon(levels)
+		c.Redirect(http.StatusFound, "/beacon")
 	})
 
 	r.POST("/update-ships", func(c *gin.Context) {

@@ -19,6 +19,7 @@ type Game struct {
 	Alloys    []*Alloy
 	Items     []*Item
 	Rooms     *Rooms
+	Beacon    *Beacon
 }
 
 var GlobalCalcer *Calcer
@@ -44,6 +45,7 @@ func NewGame() *Game {
 	ships := NewShips()
 	planets := makeNewPlanets(ores)
 	rooms := loadRoomsFromDB(db)
+	beacon := loadBeaconDataFromDB(db)
 
 	return &Game{
 		Planets:   planets,
@@ -57,6 +59,7 @@ func NewGame() *Game {
 		Alloys:    alloys,
 		Items:     items,
 		Rooms:     rooms,
+		Beacon:    beacon,
 	}
 }
 

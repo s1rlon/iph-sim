@@ -1,6 +1,9 @@
 package game
 
-import "database/sql"
+import (
+	"database/sql"
+	"log"
+)
 
 type GameData struct {
 	UpgradeHistory []UpgradeHistory
@@ -49,5 +52,17 @@ func (gd *GameData) LoadUpgradeHistoryFromDB(db *sql.DB) error {
 
 func (gd *GameData) resetGameData() {
 	gd.UpgradeHistory = []UpgradeHistory{}
+	_, err := DB.Exec("DELETE FROM upgrade_history")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
+func (g *Game) GetPlanetIndex(planet *Planet) int {
+	for i, p := range g.Planets {
+		if p == planet {
+			return i
+		}
+	}
+	return -1 // or handle the error case as needed
 }
