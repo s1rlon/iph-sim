@@ -1,0 +1,36 @@
+{{define "header" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IPH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
+        .container { display: flex; justify-content: space-between; }
+        .table-container { width: 32%; }
+        .level-column { width: 25px; } /* Set the width of the Level column */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+        th { background-color: #333; }
+        tr:nth-child(even) { background-color: #222; }
+        button { margin: 20px; padding: 10px 20px; font-size: 16px; }
+        form { margin: 20px; }
+        select, input[type="number"] { padding: 5px; font-size: 16px; background-color: #333; color: #e0e0e0; border: 1px solid #444; }
+        nav { background-color: #333; padding: 10px; }
+        nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Planets</a>
+        <a href="/managers">Managers</a>
+        <a href="/projects">Projects</a>
+        <a href="/rooms">Rooms</a>
+        <a href="/items">Items</a>
+        <a href="/market">Market</a>
+        <a href="/beacon">Beacon</a>
+        <a href="/ships">Ships</a>
+        <a href="/station">Station</a>
+    </nav>
+{{end}}

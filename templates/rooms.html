@@ -1,35 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rooms</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
-        table { width: 20%; border-collapse: collapse; }
-        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
-        th { background-color: #333; }
-        tr:nth-child(even) { background-color: #222; }
-        button { margin: 20px; padding: 10px 20px; font-size: 16px; }
-        form { margin: 20px; }
-        input[type="number"] { padding: 5px; font-size: 16px; width: 100%; }
-        nav { background-color: #333; padding: 10px; }
-        nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
-        .level-column { width: 20px; } /* Set the width of the Level column */
-    </style>
-</head>
-<body>
-  <nav>
-    <a href="/">Planets</a>
-    <a href="/managers">Managers</a>
-    <a href="/projects">Projects</a>
-    <a href="/rooms">Rooms</a>
-    <a href="/items">Items</a>
-    <a href="/market">Market</a>
-    <a href="/beacon">Beacon</a>
-    <a href="/ships">Ships</a>
-  </nav>
+{{ template  "header" . }}
   <h1>Rooms</h1>
+  <div class="table-container">
   <form action="/updateRooms" method="post">
     <table>
       <thead>
@@ -107,5 +78,6 @@
     </table>
     <button type="submit">Update Rooms</button>
   </form>
+</div>
 </body>
 </html>
