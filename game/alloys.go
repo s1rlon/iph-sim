@@ -23,6 +23,10 @@ func (a *Alloy) getValue() float64 {
 	return MarketSVC.getValue(a)
 }
 
+func (a *Alloy) getTrend() float64 {
+	return MarketSVC.getTrend(a)
+}
+
 func createAlloys() []*Alloy {
 	return []*Alloy{
 		{

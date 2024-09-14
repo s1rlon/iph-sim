@@ -135,3 +135,10 @@ func (g *Game) SetStars(name string, stars int) {
 		MarketSVC.saveStars(item, stars)
 	}
 }
+
+func (g *Game) SetTrend(name string, trend float64) {
+	item := g.getCratablebyName(name)
+	if item != nil {
+		MarketSVC.saveTrend(item, trend)
+	}
+}

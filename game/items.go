@@ -22,6 +22,9 @@ func (i *Item) getStars() int {
 func (i *Item) getValue() float64 {
 	return MarketSVC.getValue(i)
 }
+func (i *Item) getTrend() float64 {
+	return MarketSVC.getTrend(i)
+}
 
 func createItems() []*Item {
 	return []*Item{

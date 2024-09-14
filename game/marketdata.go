@@ -42,7 +42,7 @@ func (g *Game) GenerateMarketHTML() MarketData {
 			Name:        ore.Name,
 			Value:       ore.Value,
 			Stars:       ore.getStars(),
-			MarketTrend: 1.0, // Default market value
+			MarketTrend: ore.getTrend(), // Default market value
 			SellValue:   ore.getValue(),
 		})
 	}
@@ -53,7 +53,7 @@ func (g *Game) GenerateMarketHTML() MarketData {
 			Name:        alloy.Name,
 			Value:       alloy.Value,
 			Stars:       alloy.getStars(), // Default stars
-			MarketTrend: 1.0,              // Default market value
+			MarketTrend: alloy.getTrend(), // Default market value
 			SellValue:   alloy.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    alloy.BaseTime,
 			CurrentTime: alloy.BaseTime,
@@ -66,7 +66,7 @@ func (g *Game) GenerateMarketHTML() MarketData {
 			Name:        item.Name,
 			Value:       item.Value,
 			Stars:       item.getStars(), // Default stars
-			MarketTrend: 1.0,             // Default market value
+			MarketTrend: item.getTrend(), // Default market value
 			SellValue:   item.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    item.BaseTime,
 			CurrentTime: item.BaseTime,

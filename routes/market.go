@@ -27,6 +27,7 @@ func RegisterMarketRoutes(r *gin.Engine, gameInstance *game.Game) {
 		}
 		fmt.Println(trend)
 		gameInstance.SetStars(c.PostForm("CraftableName"), stars)
+		gameInstance.SetTrend(c.PostForm("CraftableName"), trend)
 		c.Redirect(http.StatusFound, "/market")
 	})
 }

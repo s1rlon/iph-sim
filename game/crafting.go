@@ -4,6 +4,7 @@ type Craftable interface {
 	getName() string
 	getBaseValue() float64
 	getStars() int
+	getTrend() float64
 }
 
 type Recepie struct {

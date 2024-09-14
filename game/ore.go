@@ -42,6 +42,10 @@ func (o *Ore) getStars() int {
 	return MarketSVC.getStars(o)
 }
 
+func (o *Ore) getTrend() float64 {
+	return MarketSVC.getTrend(o)
+}
+
 func getOres(ores []*Ore, names ...string) []*Ore {
 	var result []*Ore
 	for _, name := range names {
