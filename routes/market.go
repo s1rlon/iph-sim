@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,37 +16,17 @@ func RegisterMarketRoutes(r *gin.Engine, gameInstance *game.Game) {
 		c.HTML(200, "market.html", data)
 	})
 
-	r.POST("/updateOreStars", func(c *gin.Context) {
-		c.PostForm("oreName")
+	r.POST("/updateCraftableMarket", func(c *gin.Context) {
 		stars, err := strconv.Atoi(c.PostForm("stars"))
 		if err != nil {
 			fmt.Println("Error converting stars to int")
 		}
-		gameInstance.SetStars(c.PostForm("oreName"), stars)
-		data := gameInstance.GenerateMarketHTML()
-		c.HTML(200, "market.html", data)
-	})
-	r.POST("/updateOreMarket", func(c *gin.Context) {
-		c.PostForm("oreName")
 		trend, err := strconv.ParseFloat(c.PostForm("marketTrend"), 64)
 		if err != nil {
 			fmt.Println("Error converting stars to int")
 		}
-		fmt.Println(c.PostForm("oreName"))
 		fmt.Println(trend)
-		data := gameInstance.GenerateMarketHTML()
-		c.HTML(200, "market.html", data)
-	})
-	r.POST("/updateAlloyStars", func(c *gin.Context) {
-		data := gameInstance.GenerateMarketHTML()
-		c.HTML(200, "market.html", data)
-	})
-	r.POST("/updateAlloyMarket", func(c *gin.Context) {
-		data := gameInstance.GenerateMarketHTML()
-		c.HTML(200, "market.html", data)
-	})
-	r.POST("/updateItemMarket", func(c *gin.Context) {
-		data := gameInstance.GenerateMarketHTML()
-		c.HTML(200, "market.html", data)
+		gameInstance.SetStars(c.PostForm("CraftableName"), stars)
+		c.Redirect(http.StatusFound, "/market")
 	})
 }

@@ -6,16 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
-        table { width: 30%; border-collapse: collapse; margin: 10px; float: left; }
+        .container { display: flex; justify-content: space-between; }
+        .table-container { width: 32%; }
+        table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #444; padding: 8px; text-align: left; }
         th { background-color: #333; }
         tr:nth-child(even) { background-color: #222; }
-        button { margin: 10px; padding: 5px 10px; font-size: 16px; }
-        form { margin: 10px; }
-        input[type="number"], select { padding: 5px; font-size: 16px; width: 100%; }
+        button { margin: 20px; padding: 10px 20px; font-size: 16px; }
+        form { margin: 20px; }
+        select, input[type="number"] { padding: 5px; font-size: 16px; width: 10%; }
         nav { background-color: #333; padding: 10px; }
         nav a { color: #e0e0e0; margin: 0 10px; text-decoration: none; font-size: 18px; }
-        .small-column { width: 40px; } /* Adjust the width as needed */
     </style>
 </head>
 <body>
@@ -30,143 +31,141 @@
     <a href="/ships">Ships</a>
   </nav>
   <h1>Market</h1>
-  <div>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Base Value</th>
-          <th class="small-column">Stars</th>
-          <th class="small-column">Market Trend</th>
-          <th>Sell Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .Ores}}
-        <tr>
-          <td>{{.Name}}</td>
-          <td>{{formatNumber .Value}}</td>
-          <td class="small-column">
-            <form action="/updateOreStars" method="post">
-              <input type="hidden" name="oreName" value="{{.Name}}">
-              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td class="small-column">
-            <form action="/updateOreMarket" method="post">
-              <input type="hidden" name="oreName" value="{{.Name}}">
-              <select name="marketTrend">
-                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
-                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
-                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
-                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
-                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
-                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
-                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
-              </select>
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td>{{formatNumber .SellValue}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Base Value</th>
-          <th>Base Build</th>
-          <th class="small-column">Stars</th>
-          <th class="small-column">Market Trend</th>
-          <th>Sell Value</th>
-          <th>Current Build</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .Alloys}}
-        <tr>
-          <td>{{.Name}}</td>
-          <td>{{formatNumber .Value}}</td>
-          <td>{{.BaseTime}}</td>
-          <td class="small-column">
-            <form action="/updateAlloyStars" method="post">
-              <input type="hidden" name="alloyName" value="{{.Name}}">
-              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td class="small-column">
-            <form action="/updateAlloyMarket" method="post">
-              <input type="hidden" name="alloyName" value="{{.Name}}">
-              <select name="marketTrend">
-                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
-                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
-                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
-                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
-                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
-                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
-                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
-              </select>
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td>{{formatNumber .SellValue}}</td>
-          <td>{{.CurrentTime}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Base Value</th>
-          <th>Base Build</th>
-          <th class="small-column">Stars</th>
-          <th class="small-column">Market Trend</th>
-          <th>Sell Value</th>
-          <th>Current Build</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .Items}}
-        <tr>
-          <td>{{.Name}}</td>
-          <td>{{formatNumber .Value}}</td>
-          <td>{{.BaseTime}}</td>
-          <td class="small-column">
-            <form action="/updateItemStars" method="post">
-              <input type="hidden" name="itemName" value="{{.Name}}">
-              <input type="number" name="stars" value="{{.Stars}}" min="0" max="5">
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td class="small-column">
-            <form action="/updateItemMarket" method="post">
-              <input type="hidden" name="itemName" value="{{.Name}}">
-              <select name="marketTrend">
-                <option value="0.33" {{if eq .MarketTrend 0.33}}selected{{end}}>0.33</option>
-                <option value="0.5" {{if eq .MarketTrend 0.5}}selected{{end}}>0.5</option>
-                <option value="1" {{if eq .MarketTrend 1.0}}selected{{end}}>1</option>
-                <option value="2" {{if eq .MarketTrend 2.0}}selected{{end}}>2</option>
-                <option value="3" {{if eq .MarketTrend 3.0}}selected{{end}}>3</option>
-                <option value="4" {{if eq .MarketTrend 3.0}}selected{{end}}>4</option>
-                <option value="5" {{if eq .MarketTrend 3.0}}selected{{end}}>5</option>
-              </select>
-              <button type="submit">Update</button>
-            </form>
-          </td>
-          <td>{{formatNumber .SellValue}}</td>
-          <td>{{.CurrentTime}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
+  <div class="container">
+    <div class="table-container">
+      <form action="/updateCraftableMarket" method="post">
+        <select name="CraftableName">
+          {{range .Ores}}
+          <option value="{{.Name}}">{{.Name}}</option>
+          {{end}}
+        </select>
+        <input type="number" name="stars" min="0" value="0">
+        <select name="marketTrend">
+          <option value="0.33">0.33</option>
+          <option value="0.5">0.5</option>
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <button type="submit">Update Ore Market</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Base Value</th>
+            <th class="small-column">Stars</th>
+            <th class="small-column">Market Trend</th>
+            <th>Sell Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Ores}}
+          <tr>
+            <td>{{.Name}}</td>
+            <td>{{formatNumber .Value}}</td>
+            <td class="small-column">{{.Stars}}</td>
+            <td class="small-column">{{.MarketTrend}}</td>
+            <td>{{formatNumber .SellValue}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-container">
+      <form action="/updateCraftableMarket" method="post">
+        <select name="CraftableName">
+          {{range .Alloys}}
+          <option value="{{.Name}}">{{.Name}}</option>
+          {{end}}
+        </select>
+        <input type="number" name="stars" min="0" value="0">
+        <select name="marketTrend">
+          <option value="0.33">0.33</option>
+          <option value="0.5">0.5</option>
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <button type="submit">Update Alloy Market</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Base Value</th>
+            <th>Base Build</th>
+            <th class="small-column">Stars</th>
+            <th class="small-column">Market Trend</th>
+            <th>Sell Value</th>
+            <th>Current Build</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Alloys}}
+          <tr>
+            <td>{{.Name}}</td>
+            <td>{{formatNumber .Value}}</td>
+            <td>{{.BaseTime}}</td>
+            <td class="small-column">{{.Stars}}</td>
+            <td class="small-column">{{.MarketTrend}}</td>
+            <td>{{formatNumber .SellValue}}</td>
+            <td>{{.CurrentTime}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-container">
+      <form action="/updateCraftableMarket" method="post">
+        <select name="CraftableName">
+          {{range .Items}}
+          <option value="{{.Name}}">{{.Name}}</option>
+          {{end}}
+        </select>
+        <input type="number" name="stars" min="0" value="0">
+        <select name="marketTrend">
+          <option value="0.33">0.33</option>
+          <option value="0.5">0.5</option>
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <button type="submit">Update Ore Market</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Base Value</th>
+            <th>Base Build</th>
+            <th class="small-column">Stars</th>
+            <th class="small-column">Market Trend</th>
+            <th>Sell Value</th>
+            <th>Current Build</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Items}}
+          <tr>
+            <td>{{.Name}}</td>
+            <td>{{formatNumber .Value}}</td>
+            <td>{{.BaseTime}}</td>
+            <td class="small-column">{{.Stars}}</td>
+            <td class="small-column">{{.MarketTrend}}</td>
+            <td>{{formatNumber .SellValue}}</td>
+            <td>{{.CurrentTime}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 </html>
