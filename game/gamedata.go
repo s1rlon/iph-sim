@@ -7,6 +7,9 @@ import (
 
 type GameData struct {
 	UpgradeHistory []UpgradeHistory
+	Smelters       int
+	Crafters       int
+	ManagerSlots   int
 }
 
 type UpgradeHistory struct {

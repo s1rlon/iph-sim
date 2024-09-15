@@ -122,12 +122,13 @@ func (game *Game) unassignAllManagers() {
 }
 
 func (g *Game) AssignManagers() {
-	// Create a slice to store the added values for each planet-manager combination
-	var planetManagerValues []PlanetManagerValue
+	// Create slices to store the added values for each planet-manager combination
+	var minerManagerValues []PlanetManagerValue
+	var otherManagerValues []PlanetManagerValue
 
 	g.unassignAllManagers()
 
-	// Calculate the added value for each planet-manager combination
+	// Separate managers by role and calculate the added value for each planet-manager combination
 	for _, manager := range g.Managers {
 		for _, planet := range g.Planets {
 			currentValue := planet.getMinedOresValue(planet.MiningLevel)
@@ -136,25 +137,43 @@ func (g *Game) AssignManagers() {
 			planet.Manager = nil
 			addedValue := newValue - currentValue
 
-			planetManagerValues = append(planetManagerValues, PlanetManagerValue{
+			pmv := PlanetManagerValue{
 				PlanetName: planet.Name,
 				ManagerID:  manager.ID,
 				AddedValue: addedValue,
-			})
+			}
+
+			if manager.Primary == Miner {
+				minerManagerValues = append(minerManagerValues, pmv)
+			} else {
+				otherManagerValues = append(otherManagerValues, pmv)
+			}
 		}
 	}
 
 	// Sort the planet-manager combinations by added value in descending order
-	sort.Slice(planetManagerValues, func(i, j int) bool {
-		return planetManagerValues[i].AddedValue > planetManagerValues[j].AddedValue
+	sort.Slice(minerManagerValues, func(i, j int) bool {
+		return minerManagerValues[i].AddedValue > minerManagerValues[j].AddedValue
+	})
+
+	// Sort the other managers by planet distance (assuming planets are sorted by distance)
+	sort.Slice(otherManagerValues, func(i, j int) bool {
+		return g.getPlanetIndexByName(otherManagerValues[i].PlanetName) > g.getPlanetIndexByName(otherManagerValues[j].PlanetName)
 	})
 
 	// Create a map to keep track of assigned planets and managers
 	assignedPlanets := make(map[string]bool)
 	assignedManagers := make(map[int]bool)
 
-	// Assign managers to the most profitable planets
-	for _, pmv := range planetManagerValues {
+	// Assign managers to the most profitable planets up to the ManagerSlots limit
+	managerSlots := g.GamdeData.ManagerSlots
+	assignedCount := 0
+
+	// Assign "Miner" managers first
+	for _, pmv := range minerManagerValues {
+		if assignedCount >= managerSlots {
+			break
+		}
 		if assignedPlanets[pmv.PlanetName] || assignedManagers[pmv.ManagerID] {
 			continue
 		}
@@ -169,11 +188,51 @@ func (g *Game) AssignManagers() {
 						manager.Planet = planet
 						assignedPlanets[planet.Name] = true
 						assignedManagers[manager.ID] = true
-						fmt.Printf("Assigning manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
+						assignedCount++
+						fmt.Printf("Assigning Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
 						break
 					}
 				}
 				break
+			}
+		}
+	}
+
+	// Assign other managers to the most distant planets
+	for _, pmv := range otherManagerValues {
+		if assignedCount >= managerSlots {
+			break
+		}
+		if assignedPlanets[pmv.PlanetName] || assignedManagers[pmv.ManagerID] {
+			continue
+		}
+
+		// Assign the manager to the planet
+		for _, pmv := range otherManagerValues {
+			if assignedCount >= managerSlots {
+				break
+			}
+			if assignedPlanets[pmv.PlanetName] || assignedManagers[pmv.ManagerID] {
+				continue
+			}
+
+			// Assign the manager to the planet
+			for _, planet := range g.Planets {
+				if planet.Name == pmv.PlanetName && !planet.Locked {
+					planet.Manager = nil
+					for _, manager := range g.Managers {
+						if manager.ID == pmv.ManagerID {
+							planet.Manager = manager
+							manager.Planet = planet
+							assignedPlanets[planet.Name] = true
+							assignedManagers[manager.ID] = true
+							assignedCount++
+							fmt.Printf("Assigning non-Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
+							break
+						}
+					}
+					break
+				}
 			}
 		}
 	}

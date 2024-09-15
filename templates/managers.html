@@ -1,57 +1,58 @@
-{{ template  "header" . }}
-    <h1>Managers</h1>
-    <table>
-        <tr>
-            <th>Stars</th>
-            <th>Primary Role</th>
-            <th>Secondary Role</th>
-            <th>Planet</th>
-            <th>Actions</th>
-        </tr>
-        {{range .Managers}}
-        <tr>
-            <td>{{.Stars}}</td>
-            <td>{{.Primary}}</td>
-            <td>{{.Secondary}}</td>
-            <td>{{if .Planet}}{{.Planet.Name}}{{else}}None{{end}}</td>
-            <td>
-                <form action="/update-manager-planet" method="post" style="display:inline;">
-                    <input type="hidden" name="manager_id" value="{{.ID}}">
-                    <select name="planet">
-                        <option value="">None</option>
-                        {{range $index, $planet := $.Planets}}
-                        <option value="{{$planet.Name}}" {{if eq $planet.Name $.Planet.Name}}selected{{end}}>{{$index | add 1}}. {{$planet.Name}}</option>
-                        {{end}}
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-                <form action="/delete-manager" method="post" style="display:inline;">
-                    <input type="hidden" name="manager_id" value="{{.ID}}">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {{end}}
-    </table>
-    <h2>Add New Manager</h2>
-    <form action="/add-manager" method="post">
-        <label for="stars">Stars:</label>
-        <input type="number" id="stars" name="stars" min="1" max="5" required>
-        <label for="primary">Primary Role:</label>
-        <select id="primary" name="primary" required>
-            <option value="Pilot">Pilot</option>
-            <option value="Miner">Miner</option>
-            <option value="Packager">Packager</option>
-        </select>
-        <label for="secondary">Secondary Role:</label>
-        <select id="secondary" name="secondary" required>
-            <option value="smelt">Smelt</option>
-            <option value="craft">Craft</option>
-            <option value="mine">Mine</option>
-            <option value="speed">Speed</option>
-            <option value="cargo">Cargo</option>
-        </select>
-        <button type="submit">Add Manager</button>
-    </form>
-</body>
-</html>
+<!-- templates/managers.html -->
+{{ template "header" . }}
+<h1>Managers</h1>
+<table>
+    <tr>
+        <th>Stars</th>
+        <th>Primary Role</th>
+        <th>Secondary Role</th>
+        <th>Planet</th>
+        <th>Actions</th>
+    </tr>
+    {{range .Managers}}
+    <tr>
+        <td>{{.Stars}}</td>
+        <td>{{.Primary}}</td>
+        <td>{{.Secondary}}</td>
+        <td>{{if .Planet}}{{.Planet.Name}}{{else}}None{{end}}</td>
+        <td>
+            <form action="/update-manager-planet" method="post" style="display:inline;">
+                <input type="hidden" name="manager_id" value="{{.ID}}">
+                <select name="planet">
+                    <option value="">None</option>
+                    {{range $index, $planet := $.Planets}}
+                    {{if not $planet.Locked}}
+                    <option value="{{$planet.Name}}" {{if eq $planet.Name $.Planet.Name}}selected{{end}}>{{$index | add 1}}. {{$planet.Name}}</option>
+                    {{end}}
+                    {{end}}
+                </select>
+                <button type="submit">Update</button>
+            </form>
+            <form action="/delete-manager" method="post" style="display:inline;">
+                <input type="hidden" name="manager_id" value="{{.ID}}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {{end}}
+</table>
+<h2>Add New Manager</h2>
+<form action="/add-manager" method="post">
+    <label for="stars">Stars:</label>
+    <input type="number" id="stars" name="stars" min="1" max="5" required>
+    <label for="primary">Primary Role:</label>
+    <select id="primary" name="primary" required>
+        <option value="Pilot">Pilot</option>
+        <option value="Miner">Miner</option>
+        <option value="Packager">Packager</option>
+    </select>
+    <label for="secondary">Secondary Role:</label>
+    <select id="secondary" name="secondary" required>
+        <option value="smelt">Smelt</option>
+        <option value="craft">Craft</option>
+        <option value="mine">Mine</option>
+        <option value="speed">Speed</option>
+        <option value="cargo">Cargo</option>
+    </select>
+    <button type="submit">Add Manager</button>
+</form>

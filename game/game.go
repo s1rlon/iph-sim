@@ -32,7 +32,7 @@ func NewGame() *Game {
 		panic(err)
 	}
 
-	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}}
+	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}, Smelters: 1, Crafters: 1, ManagerSlots: 2}
 	gameData.LoadUpgradeHistoryFromDB(db)
 
 	makeTables(db)
@@ -141,4 +141,13 @@ func (g *Game) SetTrend(name string, trend float64) {
 	if item != nil {
 		MarketSVC.saveTrend(item, trend)
 	}
+}
+
+func (g *Game) getPlanetIndexByName(name string) int {
+	for i, planet := range g.Planets {
+		if planet.Name == name {
+			return i
+		}
+	}
+	return -1
 }
