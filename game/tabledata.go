@@ -11,16 +11,17 @@ type OreDatas struct {
 }
 
 type PlanetData struct {
-	Name        string
-	MiningLevel int
-	SpeedLevel  int
-	CargoLevel  int
-	TotalValue  float64
-	TotalMined  float64
-	UpgradeCost float64
-	ColonyLevel int
-	Locked      bool
-	Manager     *Manager
+	Name         string
+	MiningLevel  int
+	SpeedLevel   int
+	CargoLevel   int
+	TotalValue   float64
+	TotalMined   float64
+	UpgradeCost  float64
+	ColonyLevel  int
+	AlchemyLevel int
+	Locked       bool
+	Manager      *Manager
 }
 
 type TableData struct {
@@ -77,16 +78,17 @@ func (game *Game) CreateTableData() TableData {
 	for _, planet := range game.Planets {
 		if !planet.Locked {
 			planetData = append(planetData, PlanetData{
-				Name:        planet.Name,
-				MiningLevel: planet.MiningLevel,
-				SpeedLevel:  planet.ShipSpeedLeve1,
-				CargoLevel:  planet.ShipCargoLevel,
-				TotalValue:  totalValuePerPlanet[planet.Name],
-				TotalMined:  totalPerPlanet[planet.Name],
-				UpgradeCost: planet.getUpgradeCost(),
-				ColonyLevel: planet.ColonyLevel,
-				Locked:      planet.Locked,
-				Manager:     planet.Manager,
+				Name:         planet.Name,
+				MiningLevel:  planet.MiningLevel,
+				SpeedLevel:   planet.ShipSpeedLeve1,
+				CargoLevel:   planet.ShipCargoLevel,
+				TotalValue:   totalValuePerPlanet[planet.Name],
+				TotalMined:   totalPerPlanet[planet.Name],
+				UpgradeCost:  planet.getUpgradeCost(),
+				ColonyLevel:  planet.ColonyLevel,
+				AlchemyLevel: planet.AlchemyLevel,
+				Locked:       planet.Locked,
+				Manager:      planet.Manager,
 			})
 		}
 	}

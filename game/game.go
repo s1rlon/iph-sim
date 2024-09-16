@@ -42,7 +42,7 @@ func NewGame() *Game {
 
 	managers := getManagersFromDB(db)
 	projects := loadProjectsFromDB(db)
-	ships := NewShips()
+	ships := loadShipsFromDB(db)
 	planets := makeNewPlanets(ores)
 	rooms := loadRoomsFromDB(db)
 	beacon := loadBeaconDataFromDB(db)

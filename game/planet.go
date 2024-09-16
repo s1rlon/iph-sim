@@ -35,6 +35,14 @@ func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
 	}
 }
 
+func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int) {
+	planet := g.GetPlanetByName(planetName)
+	if planet != nil {
+		planet.AlchemyLevel = alchemyLevel
+		updatePlanetDB(DB, planet)
+	}
+}
+
 func (p *Planet) getMiningRate(level int) float64 {
 	levelFloat := float64(level)
 	return GlobalCalcer.planetCalcer.getMiningRate(p, levelFloat)

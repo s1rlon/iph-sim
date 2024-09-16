@@ -1,70 +1,95 @@
 {{ template  "header" . }}
-    <form action="/simulate" method="get">
-        <label for="steps">Number of steps to simulate:</label>
-        <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
-        <button type="submit">Simulate</button>
-    </form>
-    <button onclick="location.href='/'">Refresh</button>
-    <button onclick="location.href='/reset'">Reset Galaxy</button>
-    <button onclick="location.href='/assign-managers'">Assign Managers</button>
-    <h2>Planets</h2>
-    <table>
-        <tr>
-            <th>Ore</th>
-            {{range $index, $planet := .Planets}}
-            {{if not $planet.Locked}}
-            <th>{{$index | add 1}}. {{$planet.Name}} ({{if $planet.Locked}}Locked{{else}}{{$planet.MiningLevel}}/{{$planet.SpeedLevel}}/{{$planet.CargoLevel}}{{end}}){{if $planet.Manager}} - {{$planet.Manager.Stars}}★{{end}}</th>
-            {{end}}
-            {{end}}
-            <th>Total</th>
-        </tr>
-        <tr>
-            <th>Colony</th>
-            {{range .Planets}}
-            <td>{{.ColonyLevel}}</td>
-            {{end}}
-            <td></td>
-        <tr>
-            <th>Total Value</th>
-            {{range .Planets}}
-            <td>{{formatNumber .TotalValue}}</td>
-            {{end}}
-            <td>{{formatNumber .TotalValue}}</td>
-        </tr>
-        <tr>
-            <th>Total</th>
-            {{range .Planets}}
-            <td>{{formatNumber .TotalMined}}</td>
-            {{end}}
-            <td></td>
-        </tr>
-        {{range .Ores}}
-        <tr>
-            <th>{{.Name}}</th>
-            {{range .Amounts}}
-            <td>{{formatNumber .}}</td>
-            {{else}}
-            <td>-</td>
-            {{end}}
-            <td>{{formatNumber .Total}}</td>
-        </tr>
+<form action="/simulate" method="get">
+    <label for="steps">Number of steps to simulate:</label>
+    <input type="number" id="steps" name="steps" min="1" value="{{.LastSteps}}">
+    <button type="submit">Simulate</button>
+</form>
+<button onclick="location.href='/'">Refresh</button>
+<button onclick="location.href='/reset'">Reset Galaxy</button>
+<button onclick="location.href='/assign-managers'">Assign Managers</button>
+<h2>Planets</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        {{range $index, $planet := .Planets}}
+        {{if not $planet.Locked}}
+        <th>{{$index | add 1}}. {{$planet.Name}} ({{$planet.MiningLevel}}/{{$planet.SpeedLevel}}/{{$planet.CargoLevel}})</th>
         {{end}}
-        <tr>
-            <th>Upgrade Cost</th>
-            {{range .Planets}}
-            <td>{{formatNumber .UpgradeCost}}</td>
+        {{end}}
+        <th>Total</th>
+    </tr>
+    <tr>
+        <th>Colony</th>
+        {{range .Planets}}
+        <td>{{.ColonyLevel}}</td>
+        {{end}}
+        <td></td>
+    </tr>
+    <tr></tr>
+        <th>Alchemy</th>
+        {{range .Planets}}
+        <td>{{ .AlchemyLevel }}</td>
+        {{end}}
+        <td></td>
+    </tr>
+    <tr>
+        <th>Manager</th>
+        {{range .Planets}}
+        {{if not .Locked}}
+        <td>
+            {{if .Manager}}
+            {{.Manager.Stars}}★ - {{.Manager.Primary}}
+            {{else}}
+            None
             {{end}}
-            <td></td>
-        </tr>
-    </table>
-    {{if .NextUpgradePlanet}}
-    <p>Next planet to upgrade: {{.NextUpgradePlanet.Name}} (Current Mining Level: {{.NextUpgradePlanet.MiningLevel}}, Upgrade Cost: {{formatNumber .NextUpgradePlanet.UpgradeCost}}, Value Added: {{formatNumber .NextUpgradeValueIncrease}} and ROI: {{formatTime .NextUpgradeROI}})</p>
-    {{else}}
-    <p>No planet available for upgrade.</p>
+        </td>
+        {{end}}
+        {{end}}
+        <td></td>
+    </tr>
+    <tr>
+        <th>Total Value</th>
+        {{range .Planets}}
+        <td>{{formatNumber .TotalValue}}</td>
+        {{end}}
+        <td>{{formatNumber .TotalValue}}</td>
+    </tr>
+    <tr>
+        <th>Total</th>
+        {{range .Planets}}
+        <td>{{formatNumber .TotalMined}}</td>
+        {{end}}
+        <td></td>
+    </tr>
+    {{range .Ores}}
+    <tr>
+        <th>{{.Name}}</th>
+        {{range .Amounts}}
+        <td>{{formatNumber .}}</td>
+        {{else}}
+        <td>-</td>
+        {{end}}
+        <td>{{formatNumber .Total}}</td>
+    </tr>
     {{end}}
-    <p>Total Spent: {{formatNumber .TotalMoneySpent}}</p>
+    <tr>
+        <th>Upgrade Cost</th>
+        {{range .Planets}}
+        <td>{{formatNumber .UpgradeCost}}</td>
+        {{end}}
+        <td></td>
+    </tr>
+</table>
+{{if .NextUpgradePlanet}}
+<p>Next planet to upgrade: {{.NextUpgradePlanet.Name}} (Current Mining Level: {{.NextUpgradePlanet.MiningLevel}}, Upgrade Cost: {{formatNumber .NextUpgradePlanet.UpgradeCost}}, Value Added: {{formatNumber .NextUpgradeValueIncrease}} and ROI: {{formatTime .NextUpgradeROI}})</p>
+{{else}}
+<p>No planet available for upgrade.</p>
+{{end}}
+<p>Total Spent: {{formatNumber .TotalMoneySpent}}</p>
 
-    <h2>Set Colony Level</h2>
+<h2>Set Colony Attributes</h2>
+<div class="container">
+    <div class="table-container">
     <form action="/update-colony-level" method="post">
         <label for="planet">Planet:</label>
         <select id="planet" name="planet">
@@ -76,27 +101,41 @@
         <input type="number" id="colonyLevel" name="colonyLevel" min="0">
         <button type="submit">Set Colony Level</button>
     </form>
-
-    <h2>Upgrade History</h2>
-    <table>
-        <tr>
-            <th>Step</th>
-            <th>Planet</th>
-            <th>Cost</th>
-            <th>Increase</th>
-            <th>ROI Time</th>
-            <th>Money Spent</th> 
-        </tr>
-        {{range .UpgradeHistory}}
-        <tr>
-            <td>{{.Stepnum}}</td>
-            <td>{{.Planet}}</td>
-            <td>{{formatNumber .Upgradecost}}</td>
-            <td>{{formatNumber .ValueIncrease}}</td>
-            <td>{{formatTime .Roitime}}</td>
-            <td>{{formatNumber .TotalSpend}}</td>
-        </tr>
-        {{end}}
-    </table>
+    </div>
+    <div class="table-container">
+        <form action="/update-alchemy-level" method="post">
+            <label for="planet">Planet:</label>
+            <select id="planet" name="planet">
+                {{range .Planets}}
+                <option value="{{.Name}}">{{.Name}}</option>
+                {{end}}
+            </select>
+            <label for="alchemyLevel">Alchemy Level:</label>
+            <input type="number" id="alchemyLevel" name="alchemyLevel" min="0">
+            <button type="submit">Set Alchemy Level</button>
+        </form>
+    </div>
+</div>  
+<h2>Upgrade History</h2>
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Planet</th>
+        <th>Cost</th>
+        <th>Increase</th>
+        <th>ROI Time</th>
+        <th>Money Spent</th> 
+    </tr>
+    {{range .UpgradeHistory}}
+    <tr>
+        <td>{{.Stepnum}}</td>
+        <td>{{.Planet}}</td>
+        <td>{{formatNumber .Upgradecost}}</td>
+        <td>{{formatNumber .ValueIncrease}}</td>
+        <td>{{formatTime .Roitime}}</td>
+        <td>{{formatNumber .TotalSpend}}</td>
+    </tr>
+    {{end}}
+</table>
 </body>
 </html>
