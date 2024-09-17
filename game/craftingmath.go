@@ -25,15 +25,26 @@ func (g *Game) MakeCraftingData() []*CraftingData {
 			}
 		}
 	}
-	for _, recepie := range g.Recepies {
-		allOresAvailable := true
-		for input := range recepie.Input {
-			if ore, ok := input.(*Ore); ok && !availableOres[ore.Name] {
-				allOresAvailable = false
-				break
+
+	// Helper function to check if all inputs are available
+	var areAllInputsAvailable func(inputs map[Craftable]float64) bool
+	areAllInputsAvailable = func(inputs map[Craftable]float64) bool {
+		for input := range inputs {
+			if ore, ok := input.(*Ore); ok {
+				if !availableOres[ore.Name] {
+					return false
+				}
+			} else if recepie := input.getRecepie(); recepie != nil {
+				if !areAllInputsAvailable(recepie.Input) {
+					return false
+				}
 			}
 		}
-		if !allOresAvailable {
+		return true
+	}
+
+	for _, recepie := range g.Recepies {
+		if !areAllInputsAvailable(recepie.Input) {
 			continue
 		}
 		profit := recepie.Result.getValue() / recepie.Result.getTime()
