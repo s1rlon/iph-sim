@@ -26,7 +26,7 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	rate := 0.25 + (0.1 * (level - 1)) + (0.017 * (level - 1) * (level - 1))
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Miner") {
-			rate *= (1 + 0.25*float64(planet.Manager.Stars))
+			rate *= (1 + 0.25*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
 		}
 	}
 	//colony level
@@ -42,7 +42,7 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 
 func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	projects := 1.0
-	managers := 1.0
+	managers := p.getManagerMineBonus()
 	//Rooms
 	rooms := 1.0
 	if p.game.Rooms.Engineering > 0 {
@@ -95,7 +95,7 @@ func (p *PlanetCalcer) getShipSpeed(planet *Planet, level float64) float64 {
 	rate := 1 + 0.2*(level-1) + (1.0/75)*(level-1)*(level-1)
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Pilot") {
-			rate *= (1 + 0.25*float64(planet.Manager.Stars))
+			rate *= (1 + 0.25*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
 		}
 	}
 	rate *= p.getGlobalSpeedBonuus()
@@ -130,23 +130,11 @@ func (p *PlanetCalcer) getShipCargo(planet *Planet, level float64) float64 {
 	rate := 5 + 2*(level-1) + 0.1*(level-1)*(level-1)
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Packager") {
-			rate *= (1 + 0.5*float64(planet.Manager.Stars))
+			rate *= (1 + 0.5*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
 		}
 	}
 	rate *= p.getGlobalCargoBonuus()
 	return rate
-}
-
-func (p *PlanetCalcer) getGlobalManagerBoost() float64 {
-	rooms := 1.0
-	if p.game.Rooms.Classroom > 0 {
-		rooms += 0.5
-		if p.game.Rooms.Packaging > 1 {
-			rooms += 0.25 * float64(p.game.Rooms.Packaging-1)
-		}
-	}
-	projects := 1.0
-	return rooms * projects
 }
 
 func (p *PlanetCalcer) getBeaconLevel(planet *Planet) float64 {

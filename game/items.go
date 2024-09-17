@@ -58,7 +58,7 @@ func createItems() []*Item {
 		{
 			Name:     "Hammer",
 			Value:    135000,
-			BaseTime: 482,
+			BaseTime: 480,
 		},
 		{
 			Name:     "Glass",

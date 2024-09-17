@@ -1,0 +1,71 @@
+{{ template  "header" . }}
+<h1>Station</h1>
+<form action="/updateStation" method="post">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><label for="MineBoost">Mine Boost:</label></td>
+          <td><input type="number" id="MineBoost" name="MineBoost" step="0.01" value="{{.MineBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="SpeedBoost">Speed Boost:</label></td>
+          <td><input type="number" id="SpeedBoost" name="SpeedBoost" step="0.01" value="{{.SpeedBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="CargoBoost">Cargo Boost:</label></td>
+          <td><input type="number" id="CargoBoost" name="CargoBoost" step="0.01" value="{{.CargoBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="SmeltBoost">Smelt Boost:</label></td>
+          <td><input type="number" id="SmeltBoost" name="SmeltBoost" step="0.01" value="{{.SmeltBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="CraftBoost">Craft Boost:</label></td>
+          <td><input type="number" id="CraftBoost" name="CraftBoost" step="0.01" value="{{.CraftBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="ItemBoost">Item Boost:</label></td>
+          <td><input type="number" id="ItemBoost" name="ItemBoost" step="0.01" value="{{.ItemBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="MarketBoost">Market Boost:</label></td>
+          <td><input type="number" id="MarketBoost" name="MarketBoost" step="0.01" value="{{.MarketBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="ManagerBoost">Manager Boost:</label></td>
+          <td><input type="number" id="ManagerBoost" name="ManagerBoost" step="0.01" value="{{.ManagerBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="AsteroidValue">Asteroid Value:</label></td>
+          <td><input type="number" id="AsteroidValue" name="AsteroidValue" step="0.01" value="{{.AsteroidValue}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="Colonizing">Colonizing:</label></td>
+          <td><input type="number" id="Colonizing" name="Colonizing" step="0.01" value="{{.Colonizing}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="ProductionBoost">Production Boost:</label></td>
+          <td><input type="number" id="ProductionBoost" name="ProductionBoost" step="0.01" value="{{.ProductionBoost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="PlanetUpgradeCost">Planet Upgrade Cost:</label></td>
+          <td><input type="number" id="PlanetUpgradeCost" name="PlanetUpgradeCost" step="0.01" value="{{.PlanetUpgradeCost}}" class="small-input"></td>
+        </tr>
+        <tr>
+          <td><label for="ColonyCostRedux">Colony Cost Redux:</label></td>
+          <td><input type="number" id="ColonyCostRedux" name="ColonyCostRedux" step="0.01" value="{{.ColonyCostRedux}}" class="small-input"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit">Update</button>
+  </div>
+</form>
+</body>
+</html>

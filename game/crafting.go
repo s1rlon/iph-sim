@@ -130,3 +130,29 @@ func (r *Recepie) countCraftablesRecursive(craftableType string, visited map[str
 	}
 	return count
 }
+
+func (r *Recepie) calculateTotalTime(availableSmelters, availableCrafters int) float64 {
+	visited := make(map[string]bool)
+	return r.calculateTotalTimeRecursive(availableSmelters, availableCrafters, visited)
+}
+
+func (r *Recepie) calculateTotalTimeRecursive(availableSmelters, availableCrafters int, visited map[string]bool) float64 {
+	if visited[r.Result.getName()] {
+		return 0
+	}
+	visited[r.Result.getName()] = true
+
+	totalTime := r.Result.getTime()
+	for input, quantity := range r.Input {
+		inputRecepie := input.getRecepie()
+		if inputRecepie != nil {
+			inputTime := inputRecepie.calculateTotalTimeRecursive(availableSmelters, availableCrafters, visited)
+			if input.getType() == "Alloy" {
+				totalTime += inputTime * quantity / float64(availableSmelters)
+			} else if input.getType() == "Item" {
+				totalTime += inputTime * quantity / float64(availableCrafters)
+			}
+		}
+	}
+	return totalTime
+}

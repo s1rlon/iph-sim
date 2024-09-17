@@ -9,6 +9,7 @@ type CraftingData struct {
 	Smelters  int
 	Crafters  int
 	CraftTime float64
+	TotalTime float64
 }
 
 func (g *Game) MakeCraftingData() []*CraftingData {
@@ -47,10 +48,11 @@ func (g *Game) MakeCraftingData() []*CraftingData {
 		if !areAllInputsAvailable(recepie.Input) {
 			continue
 		}
-		profit := recepie.Result.getValue() / recepie.Result.getTime()
 		smelters := recepie.getTotalSmelters()
 		crafters := recepie.getTotalCrafters()
 		recepieItemTime := recepie.Result.getTime()
+		totalTime := recepie.calculateTotalTime(g.GameData.Smelters, g.GameData.Crafters)
+		profit := recepie.Result.getValue() / totalTime
 		data := &CraftingData{
 			Name:      recepie.Result.getName(),
 			Type:      recepie.Result.getType(),
@@ -58,6 +60,7 @@ func (g *Game) MakeCraftingData() []*CraftingData {
 			Smelters:  smelters,
 			Crafters:  crafters,
 			CraftTime: recepieItemTime,
+			TotalTime: totalTime,
 		}
 		result = append(result, data)
 	}

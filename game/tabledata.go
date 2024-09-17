@@ -129,8 +129,8 @@ func (game *Game) CreateTableData() TableData {
 		})
 	}
 
-	sort.Slice(game.GamdeData.UpgradeHistory, func(i, j int) bool {
-		return game.GamdeData.UpgradeHistory[i].Stepnum > game.GamdeData.UpgradeHistory[j].Stepnum
+	sort.Slice(game.GameData.UpgradeHistory, func(i, j int) bool {
+		return game.GameData.UpgradeHistory[i].Stepnum > game.GameData.UpgradeHistory[j].Stepnum
 	})
 
 	return TableData{
@@ -142,6 +142,6 @@ func (game *Game) CreateTableData() TableData {
 		NextUpgradeValueIncrease: nextValueIncrease,
 		NextUpgradeROI:           nextROI,
 		TotalMoneySpent:          game.moneySpent(),
-		UpgradeHistory:           game.GamdeData.UpgradeHistory,
+		UpgradeHistory:           game.GameData.UpgradeHistory,
 	}
 }

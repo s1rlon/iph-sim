@@ -55,4 +55,10 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 		gameInstance.UpdateAlchemyLevel(planetName, colonyLevel)
 		c.Redirect(http.StatusFound, "/")
 	})
+
+	r.POST("/unlock-planet", func(c *gin.Context) {
+		planetName := c.PostForm("lockedPlanet")
+		gameInstance.GetPlanetByName(planetName).Locked = false
+		c.Redirect(http.StatusFound, "/")
+	})
 }

@@ -1,6 +1,15 @@
 {{ template  "header" . }}
 <h1>Craftables</h1>
 
+<!-- Form to update smelters and crafters -->
+<form action="/updateCrafters" method="post">
+    <label for="smelters">Smelters:</label>
+    <input type="number" id="smelters" name="smelters" min="0" value="{{.GameData.Smelters}}" class="small-input">
+    <label for="crafters">Crafters:</label>
+    <input type="number" id="crafters" name="crafters" min="0" value="{{.GameData.Crafters}}" class="small-input">
+    <button type="submit">Update</button>
+</form>
+
 <h2>Alloys</h2>
 <table>
     <thead>
@@ -10,6 +19,7 @@
             <th>Smelters</th>
             <th>Crafters</th>
             <th>Craft Time</th>
+            <th>Total Time</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +31,7 @@
             <td>{{.Smelters}}</td>
             <td>{{.Crafters}}</td>
             <td>{{formatTime .CraftTime}}</td>
+            <td>{{formatTime .TotalTime}}</td>
         </tr>
         {{end}}
         {{end}}
@@ -36,6 +47,7 @@
             <th>Smelters</th>
             <th>Crafters</th>
             <th>Craft Time</th>
+            <th>Total Time</th>
         </tr>
     </thead>
     <tbody>
@@ -47,6 +59,7 @@
             <td>{{.Smelters}}</td>
             <td>{{.Crafters}}</td>
             <td>{{formatTime .CraftTime}}</td>
+            <td>{{formatTime .TotalTime}}</td>
         </tr>
         {{end}}
         {{end}}

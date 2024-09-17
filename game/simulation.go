@@ -14,7 +14,7 @@ func SimulateUpgrades(game *Game, steps int) {
 		bestPlanet, bestROI, valueIncrease := game.bestUpgradeValue()
 		if bestPlanet != nil {
 			upgradeHistory := UpgradeHistory{
-				Stepnum:       len(game.GamdeData.UpgradeHistory) + 1,
+				Stepnum:       len(game.GameData.UpgradeHistory) + 1,
 				Planet:        bestPlanet.Name,
 				Upgradecost:   bestPlanet.getUpgradeCost(),
 				Roitime:       bestROI,
@@ -27,7 +27,7 @@ func SimulateUpgrades(game *Game, steps int) {
 				bestPlanet.upgradeMining()
 				upgradeHistory.Planet = fmt.Sprintf("%s (%d/%d/%d)", bestPlanet.Name, bestPlanet.MiningLevel, bestPlanet.ShipSpeedLeve1, bestPlanet.ShipCargoLevel)
 			}
-			game.GamdeData.UpgradeHistory = append(game.GamdeData.UpgradeHistory, upgradeHistory)
+			game.GameData.UpgradeHistory = append(game.GameData.UpgradeHistory, upgradeHistory)
 			err := upgradeHistory.saveToDB(game.db)
 			if err != nil {
 				log.Fatal(err)

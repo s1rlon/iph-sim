@@ -166,7 +166,7 @@ func (g *Game) AssignManagers() {
 	assignedManagers := make(map[int]bool)
 
 	// Assign managers to the most profitable planets up to the ManagerSlots limit
-	managerSlots := g.GamdeData.ManagerSlots
+	managerSlots := g.GameData.ManagerSlots
 	assignedCount := 0
 
 	// Assign "Miner" managers first

@@ -12,7 +12,7 @@ type Game struct {
 	Managers  []*Manager
 	Projects  *Projects
 	db        *sql.DB
-	GamdeData *GameData
+	GameData  *GameData
 	Ships     *Ships
 	Ores      []*Ore
 	Recepies  []*Recepie
@@ -20,6 +20,7 @@ type Game struct {
 	Items     []*Item
 	Rooms     *Rooms
 	Beacon    *Beacon
+	Station   *Station
 }
 
 var GlobalCalcer *Calcer
@@ -37,29 +38,21 @@ func NewGame() *Game {
 
 	makeTables(db)
 	ores := createOres()
-	alloys := createAlloys()
-	items := createItems()
-
-	managers := getManagersFromDB(db)
-	projects := loadProjectsFromDB(db)
-	ships := loadShipsFromDB(db)
-	planets := makeNewPlanets(ores)
-	rooms := loadRoomsFromDB(db)
-	beacon := loadBeaconDataFromDB(db)
 
 	return &Game{
-		Planets:   planets,
+		Planets:   makeNewPlanets(ores),
 		LastSteps: 0,
 		db:        db,
-		Managers:  managers,
-		Projects:  projects,
-		GamdeData: gameData,
-		Ships:     ships,
+		Managers:  getManagersFromDB(db),
+		Projects:  loadProjectsFromDB(db),
+		GameData:  gameData,
+		Ships:     loadShipsFromDB(db),
 		Ores:      ores,
-		Alloys:    alloys,
-		Items:     items,
-		Rooms:     rooms,
-		Beacon:    beacon,
+		Alloys:    createAlloys(),
+		Items:     createItems(),
+		Rooms:     loadRoomsFromDB(db),
+		Beacon:    loadBeaconDataFromDB(db),
+		Station:   loadStationDataFromDB(db),
 	}
 }
 
@@ -86,7 +79,7 @@ func (g *Game) InitData() {
 func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
-	g.GamdeData.resetGameData()
+	g.GameData.resetGameData()
 	g.UpdateProjects(newProjects())
 }
 
@@ -104,7 +97,7 @@ func (g *Game) ResetManagers() {
 
 func (g *Game) moneySpent() float64 {
 	total := 0.0
-	for _, upgrade := range g.GamdeData.UpgradeHistory {
+	for _, upgrade := range g.GameData.UpgradeHistory {
 		total += upgrade.Upgradecost
 	}
 	return total

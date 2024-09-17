@@ -13,10 +13,21 @@ func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 	r.GET("/items", func(c *gin.Context) {
 		data := struct {
 			CraftingData []*game.CraftingData
+			GameData     *game.GameData
 		}{
 			CraftingData: gameInstance.MakeCraftingData(),
+			GameData:     gameInstance.GameData,
 		}
 		c.HTML(200, "items.html", data)
+	})
+
+	r.POST("/updateCrafters", func(c *gin.Context) {
+		// Parse the form values
+		smelters := parseFormValue(c, "smelters")
+		crafters := parseFormValue(c, "crafters")
+		gameInstance.GameData.Smelters = smelters
+		gameInstance.GameData.Crafters = crafters
+		c.Redirect(http.StatusSeeOther, "/items")
 	})
 
 	r.GET("/rooms", func(c *gin.Context) {
@@ -88,5 +99,9 @@ func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 
 		// Redirect back to the ships page
 		c.Redirect(http.StatusSeeOther, "/ships")
+	})
+
+	r.GET("/station", func(c *gin.Context) {
+		c.HTML(200, "station.html", gameInstance.Station)
 	})
 }
