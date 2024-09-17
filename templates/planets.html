@@ -21,14 +21,18 @@
     <tr>
         <th>Colony</th>
         {{range .Planets}}
+        {{if not .Locked}}
         <td>{{.ColonyLevel}}</td>
+        {{end}}
         {{end}}
         <td></td>
     </tr>
     <tr></tr>
         <th>Alchemy</th>
         {{range .Planets}}
+        {{if not .Locked}}
         <td>{{ .AlchemyLevel }}</td>
+        {{end}}
         {{end}}
         <td></td>
     </tr>
@@ -50,14 +54,18 @@
     <tr>
         <th>Total Value</th>
         {{range .Planets}}
+        {{if not .Locked}}
         <td>{{formatNumber .TotalValue}}</td>
+        {{end}}
         {{end}}
         <td>{{formatNumber .TotalValue}}</td>
     </tr>
     <tr>
         <th>Total</th>
         {{range .Planets}}
+        {{if not .Locked}}
         <td>{{formatNumber .TotalMined}}</td>
+        {{end}}
         {{end}}
         <td></td>
     </tr>
@@ -75,7 +83,9 @@
     <tr>
         <th>Upgrade Cost</th>
         {{range .Planets}}
+        {{if not .Locked}}
         <td>{{formatNumber .UpgradeCost}}</td>
+        {{end}}
         {{end}}
         <td></td>
     </tr>
@@ -94,11 +104,13 @@
         <label for="planet">Planet:</label>
         <select id="planet" name="planet">
             {{range .Planets}}
+            {{if not .Locked}}
             <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
             {{end}}
         </select>
         <label for="colonyLevel">Colony Level:</label>
-        <input type="number" id="colonyLevel" name="colonyLevel" min="0">
+        <input type="number" id="colonyLevel" name="colonyLevel" min="0" class="small-input" value="1">
         <button type="submit">Set Colony Level</button>
     </form>
     </div>
@@ -107,12 +119,27 @@
             <label for="planet">Planet:</label>
             <select id="planet" name="planet">
                 {{range .Planets}}
+                {{if not .Locked}}
                 <option value="{{.Name}}">{{.Name}}</option>
+                {{end}}
                 {{end}}
             </select>
             <label for="alchemyLevel">Alchemy Level:</label>
-            <input type="number" id="alchemyLevel" name="alchemyLevel" min="0">
+            <input type="number" id="alchemyLevel" name="alchemyLevel" min="0" class="small-input" value="1">
             <button type="submit">Set Alchemy Level</button>
+        </form>
+    </div>
+    <div class="table-container"></div>
+        <form action="/unlock-planet" method="post">
+            <label for="lockedPlanet">Locked Planet:</label>
+            <select id="lockedPlanet" name="lockedPlanet">
+                {{range .Planets}}
+                {{if .Locked}}
+                <option value="{{.Name}}">{{.Name}}</option>
+                {{end}}
+                {{end}}
+            </select>
+            <button type="submit">Unlock Planet</button>
         </form>
     </div>
 </div>  

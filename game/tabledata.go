@@ -90,7 +90,13 @@ func (game *Game) CreateTableData() TableData {
 				Locked:       planet.Locked,
 				Manager:      planet.Manager,
 			})
+		} else {
+			planetData = append(planetData, PlanetData{
+				Name:   planet.Name,
+				Locked: planet.Locked,
+			})
 		}
+
 	}
 
 	var ores []*Ore

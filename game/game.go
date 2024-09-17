@@ -87,7 +87,7 @@ func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
 	g.GamdeData.resetGameData()
-	g.Projects = newProjects()
+	g.UpdateProjects(newProjects())
 }
 
 func (g *Game) ResetPlanets() {

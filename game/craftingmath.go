@@ -13,7 +13,29 @@ type CraftingData struct {
 
 func (g *Game) MakeCraftingData() []*CraftingData {
 	var result []*CraftingData
+
+	availableOres := make(map[string]bool)
+
+	// Determine available ores by mining unlocked planets
+	for _, planet := range g.Planets {
+		if !planet.Locked {
+			minedOres := planet.Mine(planet.MiningLevel)
+			for ore := range minedOres {
+				availableOres[ore.Name] = true
+			}
+		}
+	}
 	for _, recepie := range g.Recepies {
+		allOresAvailable := true
+		for input := range recepie.Input {
+			if ore, ok := input.(*Ore); ok && !availableOres[ore.Name] {
+				allOresAvailable = false
+				break
+			}
+		}
+		if !allOresAvailable {
+			continue
+		}
 		profit := recepie.Result.getValue() / recepie.Result.getTime()
 		smelters := recepie.getTotalSmelters()
 		crafters := recepie.getTotalCrafters()
