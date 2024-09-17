@@ -83,7 +83,7 @@
             <td class="small-column">{{.Stars}}</td>
             <td class="small-column">{{.MarketTrend}}</td>
             <td>{{formatNumber .SellValue}}</td>
-            <td>{{.CurrentTime}}</td>
+            <td>{{formatTime .CurrentTime}}</td>
           </tr>
           {{end}}
         </tbody>
@@ -129,7 +129,7 @@
             <td class="small-column">{{.Stars}}</td>
             <td class="small-column">{{.MarketTrend}}</td>
             <td>{{formatNumber .SellValue}}</td>
-            <td>{{.CurrentTime}}</td>
+            <td>{{formatTime .CurrentTime}}</td>
           </tr>
           {{end}}
         </tbody>

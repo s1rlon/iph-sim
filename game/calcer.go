@@ -37,6 +37,10 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	}
 	//global bonus
 	rate *= p.getMiningGlobalBonus()
+	//projects
+	rate *= 1 + (0.25 * float64(p.game.Projects.MiningLevel))
+	//station
+	rate *= p.game.Station.MineBoost
 	return rate
 }
 
@@ -183,4 +187,16 @@ func (p *PlanetCalcer) getBeaconLevel(planet *Planet) float64 {
 	default:
 		return p.game.Beacon.Levels[20]
 	}
+}
+
+func (c *Calcer) getSmeltSpeedBonus() float64 {
+	manager := c.planetCalcer.getManagerSmeltBonus()
+	rooms := 1.0
+	if c.game.Rooms.Forge > 0 {
+		rooms += 0.2
+		if c.game.Rooms.Packaging > 1 {
+			rooms += 0.1 * float64(c.game.Rooms.Packaging-1)
+		}
+	}
+	return manager * rooms
 }

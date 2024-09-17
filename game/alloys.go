@@ -35,7 +35,7 @@ func (a *Alloy) getBaseTime() float64 {
 }
 
 func (a *Alloy) getTime() float64 {
-	return a.BaseTime
+	return a.BaseTime / GlobalCalcer.getSmeltSpeedBonus()
 }
 func (a *Alloy) getRecepie() *Recepie {
 	return MarketSVC.getRecepieByName(a.Name)
@@ -55,7 +55,7 @@ func createAlloys() []*Alloy {
 		},
 		{
 			Name:     "Lead Bar",
-			Value:    6010,
+			Value:    6100,
 			BaseTime: 40,
 		},
 		{
@@ -65,8 +65,13 @@ func createAlloys() []*Alloy {
 		},
 		{
 			Name:     "Aluminium Bar",
-			Value:    1450,
-			BaseTime: 20,
+			Value:    27600,
+			BaseTime: 80,
+		},
+		{
+			Name:     "Silver",
+			Value:    60000,
+			BaseTime: 120,
 		},
 	}
 }

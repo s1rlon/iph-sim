@@ -56,7 +56,7 @@ func (g *Game) GenerateMarketHTML() MarketData {
 			MarketTrend: alloy.getTrend(), // Default market value
 			SellValue:   alloy.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    alloy.BaseTime,
-			CurrentTime: alloy.BaseTime,
+			CurrentTime: alloy.getTime(),
 		})
 	}
 
@@ -69,7 +69,7 @@ func (g *Game) GenerateMarketHTML() MarketData {
 			MarketTrend: item.getTrend(), // Default market value
 			SellValue:   item.getValue(), // Assuming sell value is the same as base value
 			BaseTime:    item.BaseTime,
-			CurrentTime: item.BaseTime,
+			CurrentTime: item.getTime(),
 		})
 	}
 
