@@ -15,6 +15,7 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 		c.HTML(http.StatusOK, "managers.html", gin.H{
 			"Managers": managers,
 			"Planets":  planets,
+			"GameData": gameInstance.GameData,
 		})
 	})
 
@@ -59,6 +60,17 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 			c.String(http.StatusInternalServerError, "Failed to update manager planet")
 			return
 		}
+		c.Redirect(http.StatusFound, "/managers")
+	})
+
+	r.POST("/update-manager-slots", func(c *gin.Context) {
+		managerSlots, err := strconv.Atoi(c.PostForm("managerSlots"))
+		if err != nil {
+			c.String(http.StatusBadRequest, "Invalid manager slots value")
+			return
+		}
+		gameInstance.GameData.ManagerSlots = managerSlots
+		gameInstance.GameData.SyncDB(gameInstance.GetDB())
 		c.Redirect(http.StatusFound, "/managers")
 	})
 

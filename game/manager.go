@@ -17,11 +17,11 @@ const (
 type SecondaryRole string
 
 const (
-	Smelt SecondaryRole = "smelt"
-	Craft SecondaryRole = "craft"
-	Mine  SecondaryRole = "mine"
-	Speed SecondaryRole = "speed"
-	Cargo SecondaryRole = "cargo"
+	Smelt SecondaryRole = "Smelt"
+	Craft SecondaryRole = "Craft"
+	Mine  SecondaryRole = "Mine"
+	Speed SecondaryRole = "Speed"
+	Cargo SecondaryRole = "Cargo"
 )
 
 type Manager struct {

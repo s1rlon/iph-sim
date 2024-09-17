@@ -33,9 +33,6 @@ func NewGame() *Game {
 		panic(err)
 	}
 
-	gameData := &GameData{UpgradeHistory: []UpgradeHistory{}, Smelters: 1, Crafters: 1, ManagerSlots: 2}
-	gameData.LoadUpgradeHistoryFromDB(db)
-
 	makeTables(db)
 	ores := createOres()
 
@@ -45,7 +42,7 @@ func NewGame() *Game {
 		db:        db,
 		Managers:  getManagersFromDB(db),
 		Projects:  loadProjectsFromDB(db),
-		GameData:  gameData,
+		GameData:  loadGameDataFromDB(db),
 		Ships:     loadShipsFromDB(db),
 		Ores:      ores,
 		Alloys:    createAlloys(),

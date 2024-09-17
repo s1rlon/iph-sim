@@ -104,4 +104,28 @@ func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 	r.GET("/station", func(c *gin.Context) {
 		c.HTML(200, "station.html", gameInstance.Station)
 	})
+
+	r.POST("/updateStation", func(c *gin.Context) {
+		station := &game.Station{
+			MineBoost:         parseFormFloat(c, "MineBoost"),
+			SpeedBoost:        parseFormFloat(c, "SpeedBoost"),
+			CargoBoost:        parseFormFloat(c, "CargoBoost"),
+			SmeltBoost:        parseFormFloat(c, "SmeltBoost"),
+			CraftBoost:        parseFormFloat(c, "CraftBoost"),
+			ItemBoost:         parseFormFloat(c, "ItemBoost"),
+			MarketBoost:       parseFormFloat(c, "MarketBoost"),
+			ManagerBoost:      parseFormFloat(c, "ManagerBoost"),
+			AsteroidValue:     parseFormFloat(c, "AsteroidValue"),
+			Colonizing:        parseFormFloat(c, "Colonizing"),
+			ProductionBoost:   parseFormFloat(c, "ProductionBoost"),
+			PlanetUpgradeCost: parseFormFloat(c, "PlanetUpgradeCost"),
+			ColonyCostRedux:   parseFormFloat(c, "ColonyCostRedux"),
+		}
+
+		// Update the game instance with the new station data
+		gameInstance.UpdateStation(station)
+
+		// Redirect back to the station page
+		c.Redirect(http.StatusFound, "/station")
+	})
 }

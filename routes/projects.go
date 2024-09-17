@@ -51,3 +51,12 @@ func parseFormValue(c *gin.Context, key string) int {
 	}
 	return value
 }
+
+func parseFormFloat(c *gin.Context, field string) float64 {
+	valueStr := c.PostForm(field)
+	value, err := strconv.ParseFloat(valueStr, 64)
+	if err != nil {
+		return 0.0
+	}
+	return value
+}

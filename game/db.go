@@ -5,6 +5,10 @@ import (
 	"log"
 )
 
+func (g *Game) GetDB() *sql.DB {
+	return g.db
+}
+
 func resetPlanetDB(db *sql.DB, planet *Planet) {
 	_, err := db.Exec("UPDATE planets SET mining_level = 1, ship_speed_level = 1, ship_cargo_level = 1, colony_level = 0, locked = 1, alchemy_level = 1, rover = 0 WHERE name = ?", planet.Name)
 	if err != nil {
@@ -146,6 +150,7 @@ func makeTables(db *sql.DB) error {
 		`CREATE TABLE IF NOT EXISTS upgrade_history (id INTEGER PRIMARY KEY AUTOINCREMENT, stepnum INTEGER, planet TEXT, upgradecost REAL, roitime REAL, valueincrease REAL, totalspend REAL)`,
 		`CREATE TABLE IF NOT EXISTS rooms (id INTEGER PRIMARY KEY AUTOINCREMENT,engineering INTEGER,aeronautical INTEGER,packaging INTEGER,forge INTEGER,workshop INTEGER,astronomy INTEGER,laboratory INTEGER,terrarium INTEGER,lounge INTEGER,robotics INTEGER,backup_generator INTEGER,underforge INTEGER,dorm INTEGER,sales INTEGER,classroom INTEGER,marketing INTEGER)`,
 		`CREATE TABLE IF NOT EXISTS stars (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,stars INTEGER)`,
+		`CREATE TABLE IF NOT EXISTS gamedata (id INTEGER PRIMARY KEY AUTOINCREMENT,smelters INTEGER,crafters INTEGER,managerslots INTEGER)`,
 		`CREATE TABLE IF NOT EXISTS beacon (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,beacon TEXT)`,
 		`CREATE TABLE IF NOT EXISTS station (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,station TEXT)`,
 		`CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY AUTOINCREMENT, ad_ship BOOLEAN, daugtership BOOLEAN, eldership BOOLEAN, aurora BOOLEAN, enigma BOOLEAN, exodus BOOLEAN, merchant BOOLEAN, thunderhorse BOOLEAN)`,

@@ -62,8 +62,48 @@ func createItems() []*Item {
 		},
 		{
 			Name:     "Glass",
-			Value:    220000,
+			Value:    215000,
 			BaseTime: 720,
+		},
+		{
+			Name:     "Circuit",
+			Value:    620000,
+			BaseTime: 1200,
+		},
+		{
+			Name:     "Lens",
+			Value:    1100000,
+			BaseTime: 2400,
+		},
+		{
+			Name:     "Laser",
+			Value:    3200000,
+			BaseTime: 3600,
+		},
+		{
+			Name:     "Basic Computer",
+			Value:    7600000,
+			BaseTime: 4800,
+		},
+		{
+			Name:     "Solar Panel",
+			Value:    15000000,
+			BaseTime: 6000,
+		},
+		{
+			Name:     "Laser Torch",
+			Value:    31000000,
+			BaseTime: 7200,
+		},
+		{
+			Name:     "Advanced Battery",
+			Value:    35000000,
+			BaseTime: 9000,
+		},
+		{
+			Name:     "Thermal Scanner",
+			Value:    71500000,
+			BaseTime: 10750,
 		},
 	}
 }

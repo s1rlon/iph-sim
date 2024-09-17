@@ -48,11 +48,19 @@
     </select>
     <label for="secondary">Secondary Role:</label>
     <select id="secondary" name="secondary" required>
-        <option value="smelt">Smelt</option>
-        <option value="craft">Craft</option>
-        <option value="mine">Mine</option>
-        <option value="speed">Speed</option>
-        <option value="cargo">Cargo</option>
+        <option value="Smelt">Smelt</option>
+        <option value="Craft">Craft</option>
+        <option value="Mine">Mine</option>
+        <option value="Speed">Speed</option>
+        <option value="Cargo">Cargo</option>
     </select>
     <button type="submit">Add Manager</button>
 </form>
+<h2>Update Manager Slots</h2>
+<form action="/update-manager-slots" method="post">
+    <label for="managerSlots">Manager Slots:</label>
+    <input type="number" id="managerSlots" name="managerSlots" min="1" value="{{.GameData.ManagerSlots}}" required>
+    <button type="submit">Update Slots</button>
+</form>
+</body>
+</html>
