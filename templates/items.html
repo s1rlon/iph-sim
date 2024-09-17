@@ -1,4 +1,56 @@
 {{ template  "header" . }}
-    <h1>Items</h1>
+<h1>Craftables</h1>
+
+<h2>Alloys</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Profit per Second</th>
+            <th>Smelters</th>
+            <th>Crafters</th>
+            <th>Craft Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .CraftingData}}
+        {{if eq .Type "Alloy"}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{formatNumber .ProfitInS}}</td>
+            <td>{{.Smelters}}</td>
+            <td>{{.Crafters}}</td>
+            <td>{{formatTime .CraftTime}}</td>
+        </tr>
+        {{end}}
+        {{end}}
+    </tbody>
+</table>
+
+<h2>Items</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Profit per Second</th>
+            <th>Smelters</th>
+            <th>Crafters</th>
+            <th>Craft Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .CraftingData}}
+        {{if eq .Type "Item"}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{formatNumber .ProfitInS}}</td>
+            <td>{{.Smelters}}</td>
+            <td>{{.Crafters}}</td>
+            <td>{{formatTime .CraftTime}}</td>
+        </tr>
+        {{end}}
+        {{end}}
+    </tbody>
+</table>
 </body>
 </html>

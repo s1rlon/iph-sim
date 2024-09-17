@@ -11,7 +11,12 @@ import (
 func RegisterMiscRoutes(r *gin.Engine, gameInstance *game.Game) {
 
 	r.GET("/items", func(c *gin.Context) {
-		c.HTML(200, "items.html", nil)
+		data := struct {
+			CraftingData []*game.CraftingData
+		}{
+			CraftingData: gameInstance.MakeCraftingData(),
+		}
+		c.HTML(200, "items.html", data)
 	})
 
 	r.GET("/rooms", func(c *gin.Context) {

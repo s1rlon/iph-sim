@@ -87,3 +87,12 @@ func (m *Market) removeStars(item Craftable) error {
 	m.Stars[item] = 0
 	return err
 }
+
+func (m *Market) getRecepieByName(name string) *Recepie {
+	for _, recepie := range m.game.Recepies {
+		if recepie.Result.getName() == name {
+			return recepie
+		}
+	}
+	return nil
+}

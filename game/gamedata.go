@@ -60,12 +60,3 @@ func (gd *GameData) resetGameData() {
 		log.Fatal(err)
 	}
 }
-
-func (g *Game) GetPlanetIndex(planet *Planet) int {
-	for i, p := range g.Planets {
-		if p == planet {
-			return i
-		}
-	}
-	return -1 // or handle the error case as needed
-}

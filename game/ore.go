@@ -46,6 +46,20 @@ func (o *Ore) getTrend() float64 {
 	return MarketSVC.getTrend(o)
 }
 
+func (o *Ore) getType() string {
+	return "Ore"
+}
+func (o *Ore) getBaseTime() float64 {
+	return 1
+}
+func (o *Ore) getTime() float64 {
+	return 1
+}
+
+func (o *Ore) getRecepie() *Recepie {
+	return nil
+}
+
 func getOres(ores []*Ore, names ...string) []*Ore {
 	var result []*Ore
 	for _, name := range names {

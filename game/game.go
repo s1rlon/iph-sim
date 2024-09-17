@@ -151,3 +151,12 @@ func (g *Game) getPlanetIndexByName(name string) int {
 	}
 	return -1
 }
+
+func (g *Game) getRecepieByName(name string) *Recepie {
+	for _, recepie := range g.Recepies {
+		if recepie.Result.getName() == name {
+			return recepie
+		}
+	}
+	return nil
+}

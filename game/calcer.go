@@ -137,8 +137,20 @@ func (p *PlanetCalcer) getShipCargo(planet *Planet, level float64) float64 {
 	return rate
 }
 
+func (p *PlanetCalcer) getGlobalManagerBoost() float64 {
+	rooms := 1.0
+	if p.game.Rooms.Classroom > 0 {
+		rooms += 0.5
+		if p.game.Rooms.Packaging > 1 {
+			rooms += 0.25 * float64(p.game.Rooms.Packaging-1)
+		}
+	}
+	projects := 1.0
+	return rooms * projects
+}
+
 func (p *PlanetCalcer) getBeaconLevel(planet *Planet) float64 {
-	planetIndex := p.game.GetPlanetIndex(planet)
+	planetIndex := p.game.getPlanetIndexByName(planet.Name)
 	switch {
 	case planetIndex <= 3:
 		return p.game.Beacon.Levels[0]
