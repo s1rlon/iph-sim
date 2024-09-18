@@ -103,8 +103,12 @@ func (p *Planet) getMinedOresValue(level int) float64 {
 func (p *Planet) getUpgradeROITime() float64 {
 	currentValue := p.getMinedOresValue(p.MiningLevel)
 	newValue := p.getMinedOresValue(p.MiningLevel + 1)
-	valueIncrease := newValue - currentValue
 	upgradeCost := p.getUpgradeCost()
+	if p.Locked {
+		currentValue = p.getMinedOresValue(p.MiningLevel + 9)
+		newValue = p.getMinedOresValue(p.MiningLevel + 10)
+	}
+	valueIncrease := newValue - currentValue
 	if valueIncrease > 0 {
 		return upgradeCost / valueIncrease
 	}

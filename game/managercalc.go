@@ -9,7 +9,8 @@ func (p *PlanetCalcer) getGlobalManagerBoost() float64 {
 		}
 	}
 	projects := 1 + (0.1 * float64(p.game.Projects.ManTraining))
-	return rooms * projects
+	station := p.game.Station.ManagerBoost
+	return rooms * projects * station
 }
 
 func (p *PlanetCalcer) getGlobalManagerSecondaryBoost() float64 {

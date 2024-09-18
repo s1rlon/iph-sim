@@ -37,15 +37,11 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	}
 	//global bonus
 	rate *= p.getMiningGlobalBonus()
-	//projects
-	rate *= 1 + (0.25 * float64(p.game.Projects.MiningLevel))
-	//station
-	rate *= p.game.Station.MineBoost
 	return rate
 }
 
 func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
-	projects := 1.0
+	projects := 1 + (0.25 * float64(p.game.Projects.MiningLevel))
 	managers := p.getManagerMineBonus()
 	//Rooms
 	rooms := 1.0
@@ -67,13 +63,13 @@ func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 		ships += 1.0
 	}
 	//Station
-	station := 1.0
+	station := p.game.Station.MineBoost
 	return projects * managers * rooms * ships * station
 }
 
 func (p *PlanetCalcer) getGlobalSpeedBonuus() float64 {
-	projects := 1.0
-	managers := 1.0
+	projects := 1 + (0.25 * float64(p.game.Projects.ShipSpeedLevel))
+	managers := p.getManagerSpeedBonus()
 	//Rooms
 	rooms := 1.0
 	if p.game.Rooms.Aeronautical > 0 {
@@ -91,7 +87,7 @@ func (p *PlanetCalcer) getGlobalSpeedBonuus() float64 {
 		ships += 0.5
 	}
 	//Station
-	station := 1.0
+	station := p.game.Station.SpeedBoost
 	return projects * managers * rooms * ships * station
 }
 
@@ -107,8 +103,8 @@ func (p *PlanetCalcer) getShipSpeed(planet *Planet, level float64) float64 {
 }
 
 func (p *PlanetCalcer) getGlobalCargoBonuus() float64 {
-	projects := 1.0
-	managers := 1.0
+	projects := 1 + (0.25 * float64(p.game.Projects.ShipCargoLevel))
+	managers := p.getManagerCargoBonus()
 	//Rooms
 	rooms := 1.0
 	if p.game.Rooms.Packaging > 0 {
@@ -126,7 +122,7 @@ func (p *PlanetCalcer) getGlobalCargoBonuus() float64 {
 		ships += 0.5
 	}
 	//Station
-	station := 1.0
+	station := p.game.Station.CargoBoost
 	return projects * managers * rooms * ships * station
 }
 
@@ -198,5 +194,6 @@ func (c *Calcer) getSmeltSpeedBonus() float64 {
 			rooms += 0.1 * float64(c.game.Rooms.Packaging-1)
 		}
 	}
-	return manager * rooms
+	station := c.game.Station.SmeltBoost
+	return manager * rooms * station
 }
