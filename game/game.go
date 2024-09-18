@@ -38,7 +38,7 @@ func NewGame() *Game {
 
 	return &Game{
 		Planets:   makeNewPlanets(ores),
-		LastSteps: 0,
+		LastSteps: 1,
 		db:        db,
 		Managers:  getManagersFromDB(db),
 		Projects:  loadProjectsFromDB(db),

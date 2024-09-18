@@ -10,7 +10,7 @@ import (
 
 func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 	r.GET("/", func(c *gin.Context) {
-		stepsStr := c.DefaultQuery("steps", "0")
+		stepsStr := c.DefaultQuery("steps", "1")
 		steps, err := strconv.Atoi(stepsStr)
 		if err != nil || steps < 1 {
 			steps = gameInstance.LastSteps
@@ -20,7 +20,7 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 	})
 
 	r.GET("/simulate", func(c *gin.Context) {
-		stepsStr := c.DefaultQuery("steps", "0")
+		stepsStr := c.DefaultQuery("steps", "1")
 		steps, err := strconv.Atoi(stepsStr)
 		if err != nil || steps < 1 {
 			steps = gameInstance.LastSteps

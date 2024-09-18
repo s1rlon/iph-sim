@@ -1,14 +1,14 @@
 {{ template  "header" . }}
   <h1>Market</h1>
   <div class="container">
-    <div class="table-container">
+    <div class="table-container" name="Ores">
       <form action="/updateCraftableMarket" method="post">
-        <select name="CraftableName">
+        <select name="CraftableName" name="CraftableName" id="CraftableNameOres" onchange="updateStars('Ores')">
           {{range .Ores}}
           <option value="{{.Name}}">{{.Name}}</option>
           {{end}}
         </select>
-        <input type="number" class="small-input" name="stars" min="0" value="0">
+        <input input type="number" class="small-input" name="stars" id="starsOres" min="0" value="0">
         <select name="marketTrend">
           <option value="0.33">0.33</option>
           <option value="0.5">0.5</option>
@@ -43,14 +43,14 @@
         </tbody>
       </table>
     </div>
-    <div class="table-container">
+    <div class="table-container" name="Alloys">
       <form action="/updateCraftableMarket" method="post">
-        <select name="CraftableName">
+        <select name="CraftableName" id="CraftableNameAlloys" onchange="updateStars('Alloys')">
           {{range .Alloys}}
           <option value="{{.Name}}">{{.Name}}</option>
           {{end}}
         </select>
-        <input type="number" class="small-input" name="stars" min="0" value="0">
+        <input type="number" class="small-input" name="stars" id="starsAlloys" min="0" value="0">
         <select name="marketTrend">
           <option value="0.33">0.33</option>
           <option value="0.5">0.5</option>
@@ -89,14 +89,14 @@
         </tbody>
       </table>
     </div>
-    <div class="table-container">
+    <div class="table-container" name="Items">
       <form action="/updateCraftableMarket" method="post">
-        <select name="CraftableName">
+        <select name="CraftableName" id="CraftableNameItems" onchange="updateStars('Items')">
           {{range .Items}}
           <option value="{{.Name}}">{{.Name}}</option>
           {{end}}
         </select>
-        <input type="number" class="small-input" name="stars" min="0" value="0">
+        <input type="number" class="small-input" name="stars" id="starsItems" min="0" value="0">
         <select name="marketTrend">
           <option value="0.33">0.33</option>
           <option value="0.5">0.5</option>
@@ -136,5 +136,30 @@
       </table>
     </div>
   </div>
+
+<script>
+  const starsData = {
+    {{range .Ores}}
+    "{{.Name}}": {{.Stars}},
+    {{end}}
+    {{range .Alloys}}
+    "{{.Name}}": {{.Stars}},
+    {{end}}
+  };
+
+  function updateStars(category) {
+    const craftableName = document.getElementById(`CraftableName${category}`).value;
+    const starsInput = document.getElementById(`stars${category}`);
+    starsInput.value = starsData[craftableName] || 0;
+  }
+
+  // Initialize stars input on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    updateStars('Ores');
+    updateStars('Alloys');
+    updateStars('Items');
+  });
+</script>
+
 </body>
 </html>

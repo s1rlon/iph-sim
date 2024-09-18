@@ -84,6 +84,13 @@ func createRecepies(game *Game) []*Recepie {
 			Input: map[Craftable]float64{
 				game.getAlloy("Silicon Bar"): 10,
 			},
+		}, {
+			Result: game.getItem("Circuit"),
+			Input: map[Craftable]float64{
+				game.getAlloy("Silicon Bar"):   5,
+				game.getAlloy("Aluminium Bar"): 5,
+				game.getItem("Copper Wire"):    10,
+			},
 		},
 	}
 	allRecepies := append(alloyRecepies, itemRecepies...)

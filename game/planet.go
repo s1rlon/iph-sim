@@ -39,6 +39,23 @@ func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int) {
 	planet := g.GetPlanetByName(planetName)
 	if planet != nil {
 		planet.AlchemyLevel = alchemyLevel
+		oreslen := len(planet.Ores)
+		currentOre := planet.Ores[oreslen-1]
+		var nextOre *Ore
+		for i, ore := range g.Ores {
+			if ore == currentOre && i+alchemyLevel < len(g.Ores) {
+				nextOre = g.Ores[i+alchemyLevel]
+				break
+			}
+		}
+		if nextOre != nil {
+			for i, ore := range planet.Ores {
+				if ore == currentOre {
+					planet.Ores[i] = nextOre
+					break
+				}
+			}
+		}
 		updatePlanetDB(DB, planet)
 	}
 }
