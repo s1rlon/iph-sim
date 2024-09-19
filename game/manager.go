@@ -156,9 +156,19 @@ func (g *Game) AssignManagers() {
 		return minerManagerValues[i].AddedValue > minerManagerValues[j].AddedValue
 	})
 
-	// Sort the other managers by planet distance (assuming planets are sorted by distance)
+	// Sort the other managers by added value in descending order, then by distance (index) in descending order, and then by stars in descending order
 	sort.Slice(otherManagerValues, func(i, j int) bool {
-		return g.getPlanetIndexByName(otherManagerValues[i].PlanetName) > g.getPlanetIndexByName(otherManagerValues[j].PlanetName)
+		if otherManagerValues[i].AddedValue == otherManagerValues[j].AddedValue {
+			indexI := g.getPlanetIndexByName(otherManagerValues[i].PlanetName)
+			indexJ := g.getPlanetIndexByName(otherManagerValues[j].PlanetName)
+			if indexI == indexJ {
+				managerI := g.getManagerByID(otherManagerValues[i].ManagerID)
+				managerJ := g.getManagerByID(otherManagerValues[j].ManagerID)
+				return managerI.Stars > managerJ.Stars
+			}
+			return indexI > indexJ
+		}
+		return otherManagerValues[i].AddedValue > otherManagerValues[j].AddedValue
 	})
 
 	// Create a map to keep track of assigned planets and managers
@@ -180,7 +190,7 @@ func (g *Game) AssignManagers() {
 
 		// Assign the manager to the planet
 		for _, planet := range g.Planets {
-			if planet.Name == pmv.PlanetName {
+			if planet.Name == pmv.PlanetName && !planet.Locked {
 				planet.Manager = nil
 				for _, manager := range g.Managers {
 					if manager.ID == pmv.ManagerID {
@@ -198,7 +208,7 @@ func (g *Game) AssignManagers() {
 		}
 	}
 
-	// Assign other managers to the most distant planets
+	// Assign other managers
 	for _, pmv := range otherManagerValues {
 		if assignedCount >= managerSlots {
 			break
@@ -208,32 +218,31 @@ func (g *Game) AssignManagers() {
 		}
 
 		// Assign the manager to the planet
-		for _, pmv := range otherManagerValues {
-			if assignedCount >= managerSlots {
-				break
-			}
-			if assignedPlanets[pmv.PlanetName] || assignedManagers[pmv.ManagerID] {
-				continue
-			}
-
-			// Assign the manager to the planet
-			for _, planet := range g.Planets {
-				if planet.Name == pmv.PlanetName && !planet.Locked {
-					planet.Manager = nil
-					for _, manager := range g.Managers {
-						if manager.ID == pmv.ManagerID {
-							planet.Manager = manager
-							manager.Planet = planet
-							assignedPlanets[planet.Name] = true
-							assignedManagers[manager.ID] = true
-							assignedCount++
-							fmt.Printf("Assigning non-Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
-							break
-						}
+		for _, planet := range g.Planets {
+			if planet.Name == pmv.PlanetName && !planet.Locked {
+				planet.Manager = nil
+				for _, manager := range g.Managers {
+					if manager.ID == pmv.ManagerID {
+						planet.Manager = manager
+						manager.Planet = planet
+						assignedPlanets[planet.Name] = true
+						assignedManagers[manager.ID] = true
+						assignedCount++
+						fmt.Printf("Assigning non-Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
+						break
 					}
-					break
 				}
+				break
 			}
 		}
 	}
+}
+
+func (g *Game) getManagerByID(managerID int) *Manager {
+	for _, manager := range g.Managers {
+		if manager.ID == managerID {
+			return manager
+		}
+	}
+	return nil
 }

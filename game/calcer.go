@@ -54,13 +54,13 @@ func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	//Ships
 	ships := 1.0
 	if p.game.Ships.AdShip {
-		ships += 0.2
+		ships *= 1.2
 	}
 	if p.game.Ships.Daugtership {
-		ships += 0.5
+		ships *= 1.5
 	}
 	if p.game.Ships.Eldership {
-		ships += 1.0
+		ships *= 2.0
 	}
 	//Station
 	station := p.game.Station.MineBoost
@@ -196,4 +196,15 @@ func (c *Calcer) getSmeltSpeedBonus() float64 {
 	}
 	station := c.game.Station.SmeltBoost
 	return manager * rooms * station
+}
+
+func (c *Calcer) getGobalUpgradeCostRedux() float64 {
+	rooms := 1.0
+	if c.game.Rooms.Astronomy > 0 {
+		rooms += 0.1
+		if c.game.Rooms.Astronomy > 1 {
+			rooms += 0.04 * float64(c.game.Rooms.Astronomy-1)
+		}
+	}
+	return rooms * c.game.Station.PlanetUpgradeCost
 }

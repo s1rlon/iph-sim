@@ -82,7 +82,7 @@ func (p *Planet) getLevelUpgradeCost(level int) float64 {
 	levelFloat := float64(level)
 	base_cost := (float64(p.UnlockCost) / 20) * math.Pow(1.3, levelFloat-1)
 	cost := base_cost * 1
-	return cost
+	return cost / GlobalCalcer.getGobalUpgradeCostRedux()
 }
 
 func (p *Planet) getUpgradeCost() float64 {
