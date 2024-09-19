@@ -1,7 +1,5 @@
 package game
 
-import "fmt"
-
 type Calcer struct {
 	game         *Game
 	planetCalcer *PlanetCalcer
@@ -29,7 +27,6 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Miner") {
 			rate *= (1 + 0.25*float64(planet.Manager.Stars)*p.getGlobalManagerBoost())
-			fmt.Println(roundToTwoDecimalPlaces(1 + 0.25*float64(planet.Manager.Stars)*p.getGlobalManagerBoost()))
 		}
 	}
 	//colony level
@@ -67,7 +64,6 @@ func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	}
 	//Station
 	station := p.game.Station.MineBoost
-	fmt.Println(managers)
 	return projects * managers * rooms * ships * station
 }
 
