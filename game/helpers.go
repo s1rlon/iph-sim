@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"math"
 )
 
 func FormatNumber(value float64) string {
@@ -28,4 +29,8 @@ func FormatTime(seconds float64) string {
 	minutes := (int(seconds) % 3600) / 60
 	secs := int(seconds) % 60
 	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, secs)
+}
+
+func roundToTwoDecimalPlaces(num float64) float64 {
+	return math.Ceil(num*100) / 100
 }

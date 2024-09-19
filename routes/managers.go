@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,10 @@ import (
 func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 	r.GET("/managers", func(c *gin.Context) {
 		managers := gameInstance.GetManagers()
+
+		sort.Slice(managers, func(i, j int) bool {
+			return managers[i].Stars > managers[j].Stars
+		})
 		planets := gameInstance.Planets
 		c.HTML(http.StatusOK, "managers.html", gin.H{
 			"Managers": managers,

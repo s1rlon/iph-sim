@@ -28,7 +28,7 @@ var DB *sql.DB
 var MarketSVC *Market
 
 func NewGame() *Game {
-	db, err := sql.Open("sqlite3", "ipm.sql")
+	db, err := sql.Open("sqlite3", "ipm2.sql")
 	if err != nil {
 		panic(err)
 	}

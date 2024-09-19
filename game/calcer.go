@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 type Calcer struct {
 	game         *Game
 	planetCalcer *PlanetCalcer
@@ -26,7 +28,8 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 	rate := 0.25 + (0.1 * (level - 1)) + (0.017 * (level - 1) * (level - 1))
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Miner") {
-			rate *= (1 + 0.25*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
+			rate *= (1 + 0.25*float64(planet.Manager.Stars)*p.getGlobalManagerBoost())
+			fmt.Println(roundToTwoDecimalPlaces(1 + 0.25*float64(planet.Manager.Stars)*p.getGlobalManagerBoost()))
 		}
 	}
 	//colony level
@@ -42,7 +45,7 @@ func (p *PlanetCalcer) getMiningRate(planet *Planet, level float64) float64 {
 
 func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	projects := 1 + (0.25 * float64(p.game.Projects.MiningLevel))
-	managers := p.getManagerMineBonus()
+	managers := roundToTwoDecimalPlaces(p.getManagerMineBonus())
 	//Rooms
 	rooms := 1.0
 	if p.game.Rooms.Engineering > 0 {
@@ -64,6 +67,7 @@ func (p *PlanetCalcer) getMiningGlobalBonus() float64 {
 	}
 	//Station
 	station := p.game.Station.MineBoost
+	fmt.Println(managers)
 	return projects * managers * rooms * ships * station
 }
 
@@ -81,10 +85,10 @@ func (p *PlanetCalcer) getGlobalSpeedBonuus() float64 {
 	//Ships
 	ships := 1.0
 	if p.game.Ships.Daugtership {
-		ships += 0.25
+		ships *= 1.25
 	}
 	if p.game.Ships.Eldership {
-		ships += 0.5
+		ships *= 1.5
 	}
 	//Station
 	station := p.game.Station.SpeedBoost
@@ -95,7 +99,7 @@ func (p *PlanetCalcer) getShipSpeed(planet *Planet, level float64) float64 {
 	rate := 1 + 0.2*(level-1) + (1.0/75)*(level-1)*(level-1)
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Pilot") {
-			rate *= (1 + 0.25*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
+			rate *= (1 + 0.25*float64(planet.Manager.Stars)*p.getGlobalManagerBoost())
 		}
 	}
 	rate *= p.getGlobalSpeedBonuus()
@@ -116,10 +120,10 @@ func (p *PlanetCalcer) getGlobalCargoBonuus() float64 {
 	//Ships
 	ships := 1.0
 	if p.game.Ships.Daugtership {
-		ships += 0.25
+		ships *= 1.25
 	}
 	if p.game.Ships.Eldership {
-		ships += 0.5
+		ships *= 1.5
 	}
 	//Station
 	station := p.game.Station.CargoBoost
@@ -130,7 +134,7 @@ func (p *PlanetCalcer) getShipCargo(planet *Planet, level float64) float64 {
 	rate := 5 + 2*(level-1) + 0.1*(level-1)*(level-1)
 	if planet.Manager != nil {
 		if planet.Manager.Primary == Role("Packager") {
-			rate *= (1 + 0.5*float64(planet.Manager.Stars)) * p.getGlobalManagerBoost()
+			rate *= (1 + 0.5*float64(planet.Manager.Stars)*p.getGlobalManagerBoost())
 		}
 	}
 	rate *= p.getGlobalCargoBonuus()
