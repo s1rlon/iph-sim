@@ -81,7 +81,7 @@ func (p *Planet) Mine(level int) map[*Ore]float64 {
 func (p *Planet) getLevelUpgradeCost(level int) float64 {
 	levelFloat := float64(level)
 	base_cost := (float64(p.UnlockCost) / 20) * math.Pow(1.3, levelFloat-1)
-	cost := base_cost / GlobalCalcer.getGobalUpgradeCostRedux()
+	cost := base_cost - (base_cost * (1 - GlobalCalcer.getGobalUpgradeCostRedux()))
 	return cost
 }
 
