@@ -25,11 +25,12 @@ const (
 )
 
 type Manager struct {
-	ID        int
-	Stars     int
-	Primary   Role
-	Secondary SecondaryRole
-	Planet    *Planet
+	ID         int           `gorm:"primaryKey;autoIncrement"`
+	Stars      int           `gorm:"not null"`
+	Primary    Role          `gorm:"not null"`
+	Secondary  SecondaryRole `gorm:"not null"`
+	PlanetName *string       `gorm:"index"` // Nullable to allow for unassigned managers
+	Planet     *Planet       `gorm:"foreignKey:PlanetName;references:Name"`
 }
 
 func (g *Game) GetManagers() []*Manager {
@@ -37,48 +38,37 @@ func (g *Game) GetManagers() []*Manager {
 }
 
 func (g *Game) AddManager(manager *Manager) {
-	insertManagerSQL := `INSERT INTO managers (stars, primary_role, secondary_role) VALUES (?, ?, ?)`
-	statement, err := g.db.Prepare(insertManagerSQL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer statement.Close()
-
-	_, err = statement.Exec(manager.Stars, manager.Primary, manager.Secondary)
+	err := g.db.Create(manager).Error
 	if err != nil {
 		log.Fatal(err)
 	}
 	g.Managers = append(g.Managers, manager)
-
 }
 
-func (m *Manager) unassignManager() {
+func (m *Manager) unassignManager(g *Game) {
 	if m.Planet != nil {
 		m.Planet.Manager = nil
 	}
 	m.Planet = nil
+	m.PlanetName = nil
+	if g != nil {
+		g.db.Model(m).Select("PlanetName").Updates(map[string]interface{}{"planet_name": nil})
+	}
 }
 
 func (g *Game) DeleteManager(managerID int) {
-	deleteManagerSQL := `DELETE FROM managers WHERE id = ?`
-	statement, err := g.db.Prepare(deleteManagerSQL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer statement.Close()
-
-	_, err = statement.Exec(managerID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Delete from the game.Managers slice
-	for i, manager := range g.Managers {
-		if manager.ID == managerID {
-			manager.unassignManager()
+	var manager *Manager
+	for i, m := range g.Managers {
+		if m.ID == managerID {
+			manager = m
 			g.Managers = append(g.Managers[:i], g.Managers[i+1:]...)
 			break
 		}
+	}
+
+	if manager != nil {
+		manager.unassignManager(g)
+		g.db.Delete(manager)
 	}
 }
 
@@ -95,18 +85,23 @@ func (g *Game) UpdateManagerPlanet(managerID int, planetName string) error {
 		return fmt.Errorf("manager with ID %d not found", managerID)
 	}
 
+	if planetName == "" {
+		manager.unassignManager(g)
+		return nil
+	}
+
 	for _, planet := range g.Planets {
 		if planet.Name == planetName {
-			manager.unassignManager()
+			manager.unassignManager(g)
 			manager.Planet = planet
+			manager.PlanetName = &planet.Name
 			planet.Manager = manager
+			g.db.Save(manager)
 			return nil
 		}
 	}
-	if manager.Planet != nil {
-		manager.unassignManager()
-	}
-	return nil
+
+	return fmt.Errorf("planet %s not found", planetName)
 }
 
 type PlanetManagerValue struct {
@@ -117,7 +112,7 @@ type PlanetManagerValue struct {
 
 func (game *Game) unassignAllManagers() {
 	for _, manager := range game.Managers {
-		manager.unassignManager()
+		manager.unassignManager(game)
 	}
 }
 
@@ -196,9 +191,11 @@ func (g *Game) AssignManagers() {
 					if manager.ID == pmv.ManagerID {
 						planet.Manager = manager
 						manager.Planet = planet
+						manager.PlanetName = &planet.Name
 						assignedPlanets[planet.Name] = true
 						assignedManagers[manager.ID] = true
 						assignedCount++
+						g.db.Save(manager)
 						fmt.Printf("Assigning Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
 						break
 					}
@@ -225,9 +222,11 @@ func (g *Game) AssignManagers() {
 					if manager.ID == pmv.ManagerID {
 						planet.Manager = manager
 						manager.Planet = planet
+						manager.PlanetName = &planet.Name
 						assignedPlanets[planet.Name] = true
 						assignedManagers[manager.ID] = true
 						assignedCount++
+						g.db.Save(manager)
 						fmt.Printf("Assigning non-Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
 						break
 					}

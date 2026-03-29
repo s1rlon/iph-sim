@@ -1,11 +1,13 @@
 package game
 
 import (
-	"database/sql"
+	"errors"
 	"log"
+	"gorm.io/gorm"
 )
 
 type Rooms struct {
+	ID              uint `gorm:"primaryKey;default:1"`
 	Engineering     int // Mine speed
 	Aeronautical    int // Ship speed
 	Packaging       int // Cargo
@@ -26,6 +28,7 @@ type Rooms struct {
 
 func createRooms() *Rooms {
 	return &Rooms{
+		ID:              1,
 		Engineering:     0,
 		Aeronautical:    0,
 		Packaging:       0,
@@ -46,39 +49,21 @@ func createRooms() *Rooms {
 }
 
 func (g *Game) saveRoomsToDB(r *Rooms) {
-	_, err := g.db.Exec("DELETE FROM rooms")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	query := `
-			INSERT INTO rooms (
-					engineering, aeronautical, packaging, forge, workshop, astronomy, laboratory, terrarium, lounge, robotics, backup_generator, underforge, dorm, sales, classroom, marketing
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`
-	_, err = g.db.Exec(query, r.Engineering, r.Aeronautical, r.Packaging, r.Forge, r.Workshop, r.Astronomy, r.Laboratory, r.Terrarium, r.Lounge, r.Robotics, r.BackupGenerator, r.Underforge, r.Dorm, r.Sales, r.Classroom, r.Marketing)
+	r.ID = 1
+	err := g.db.Save(r).Error
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func loadRoomsFromDB(db *sql.DB) *Rooms {
-	query := `
-			SELECT engineering, aeronautical, packaging, forge, workshop, astronomy, laboratory, terrarium, lounge, robotics, backup_generator, underforge, dorm, sales, classroom, marketing
-			FROM rooms
-			ORDER BY id DESC LIMIT 1
-	`
-	row := db.QueryRow(query)
-
+func (g *Game) loadRoomsFromDB() *Rooms {
 	var r Rooms
-	err := row.Scan(&r.Engineering, &r.Aeronautical, &r.Packaging, &r.Forge, &r.Workshop, &r.Astronomy, &r.Laboratory, &r.Terrarium, &r.Lounge, &r.Robotics, &r.BackupGenerator, &r.Underforge, &r.Dorm, &r.Sales, &r.Classroom, &r.Marketing)
+	err := g.db.First(&r, 1).Error
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return createRooms()
 		}
-		log.Fatal(err)
 	}
-
 	return &r
 }
 

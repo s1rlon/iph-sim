@@ -14,15 +14,16 @@
         <td>{{.Stars}}</td>
         <td>{{.Primary}}</td>
         <td>{{.Secondary}}</td>
-        <td>{{if .Planet}}{{.Planet.Name}}{{else}}None{{end}}</td>
+        <td>{{if .PlanetName}}{{.PlanetName}}{{else}}None{{end}}</td>
         <td>
+            {{$manager := .}}
             <form action="/update-manager-planet" method="post" style="display:inline;">
                 <input type="hidden" name="manager_id" value="{{.ID}}">
                 <select name="planet">
                     <option value="">None</option>
                     {{range $index, $planet := $.Planets}}
                     {{if not $planet.Locked}}
-                    <option value="{{$planet.Name}}" {{if eq $planet.Name $.Planet.Name}}selected{{end}}>{{$index | add 1}}. {{$planet.Name}}</option>
+                    <option value="{{$planet.Name}}" {{if and $manager.PlanetName (eq $planet.Name $manager.PlanetName)}}selected{{end}}>{{$index | add 1}}. {{$planet.Name}}</option>
                     {{end}}
                     {{end}}
                 </select>

@@ -1,12 +1,13 @@
 package game
 
 import (
-	"database/sql"
-	"encoding/json"
+	"errors"
 	"log"
+	"gorm.io/gorm"
 )
 
 type Station struct {
+	ID                uint `gorm:"primaryKey;default:1"`
 	MineBoost         float64
 	SpeedBoost        float64
 	CargoBoost        float64
@@ -24,6 +25,7 @@ type Station struct {
 
 func newStation() *Station {
 	return &Station{
+		ID:                1,
 		MineBoost:         1,
 		SpeedBoost:        1,
 		CargoBoost:        1,
@@ -40,31 +42,20 @@ func newStation() *Station {
 	}
 }
 
-func loadStationDataFromDB(db *sql.DB) *Station {
-	var jsonString string
-	querySQL := `SELECT station FROM station WHERE id = 1`
-	err := db.QueryRow(querySQL).Scan(&jsonString)
+func (g *Game) loadStationDataFromDB() *Station {
+	var s Station
+	err := g.db.First(&s, 1).Error
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return newStation()
 		}
-		log.Fatal(err)
-	}
-	var s Station
-	err = json.Unmarshal([]byte(jsonString), &s)
-	if err != nil {
-		log.Fatal(err)
 	}
 	return &s
 }
 
 func (g *Game) saveStationDataToDB(station *Station) {
-	jsonString, err := json.Marshal(station)
-	if err != nil {
-		log.Fatal(err)
-	}
-	querySQL := `INSERT OR REPLACE INTO station (id, station) VALUES (1, ?)`
-	_, err = g.db.Exec(querySQL, jsonString)
+	station.ID = 1
+	err := g.db.Save(station).Error
 	if err != nil {
 		log.Fatal(err)
 	}

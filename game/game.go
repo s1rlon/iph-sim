@@ -1,17 +1,22 @@
 package game
 
 import (
-	"database/sql"
-
-	_ "github.com/mattn/go-sqlite3"
+	"gorm.io/gorm"
+	"gorm.io/driver/sqlite"
 )
+
+type Star struct {
+	ID    uint   `gorm:"primaryKey"`
+	Name  string `gorm:"uniqueIndex"`
+	Stars int
+}
 
 type Game struct {
 	Planets   []*Planet
 	LastSteps int
 	Managers  []*Manager
 	Projects  *Projects
-	db        *sql.DB
+	db        *gorm.DB
 	GameData  *GameData
 	Ships     *Ships
 	Ores      []*Ore
@@ -24,33 +29,51 @@ type Game struct {
 }
 
 var GlobalCalcer *Calcer
-var DB *sql.DB
+var DB *gorm.DB
 var MarketSVC *Market
 
 func NewGame() *Game {
-	db, err := sql.Open("sqlite3", "ipm2.sql")
+	db, err := gorm.Open(sqlite.Open("ipm2.sql"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 
-	makeTables(db)
+	err = db.AutoMigrate(
+		&Planet{},
+		&Manager{},
+		&Projects{},
+		&UpgradeHistory{},
+		&Rooms{},
+		&Star{},
+		&GameData{},
+		&Beacon{},
+		&Station{},
+		&Ships{},
+	)
+	if err != nil {
+		panic(err)
+	}
+
 	ores := createOres()
 
-	return &Game{
+	g := &Game{
 		Planets:   makeNewPlanets(ores),
 		LastSteps: 1,
 		db:        db,
-		Managers:  getManagersFromDB(db),
-		Projects:  loadProjectsFromDB(db),
-		GameData:  loadGameDataFromDB(db),
-		Ships:     loadShipsFromDB(db),
 		Ores:      ores,
 		Alloys:    createAlloys(),
 		Items:     createItems(),
-		Rooms:     loadRoomsFromDB(db),
-		Beacon:    loadBeaconDataFromDB(db),
-		Station:   loadStationDataFromDB(db),
 	}
+
+	g.Managers = g.getManagersFromDB()
+	g.Projects = g.loadProjectsFromDB()
+	g.GameData = g.loadGameDataFromDB()
+	g.Ships = g.loadShipsFromDB()
+	g.Rooms = g.loadRoomsFromDB()
+	g.Beacon = g.loadBeaconDataFromDB()
+	g.Station = g.loadStationDataFromDB()
+
+	return g
 }
 
 func (g *Game) InitData() {
@@ -58,7 +81,7 @@ func (g *Game) InitData() {
 	MarketSVC = NewMarket(g)
 	g.Recepies = createRecepies(g)
 	DB = g.db
-	dbPlanets, _ := getPlanetsFromDB(g.db)
+	dbPlanets, _ := g.getPlanetsFromDB()
 	for _, planet := range g.Planets {
 		for _, dbPlanet := range dbPlanets {
 			if planet.Name == dbPlanet.Name {
@@ -82,13 +105,13 @@ func (g *Game) ResetGalaxy() {
 
 func (g *Game) ResetPlanets() {
 	for _, planet := range g.Planets {
-		planet.resetPlanet()
+		planet.resetPlanet(g)
 	}
 }
 
 func (g *Game) ResetManagers() {
 	for _, manager := range g.Managers {
-		manager.unassignManager()
+		manager.unassignManager(g)
 	}
 }
 

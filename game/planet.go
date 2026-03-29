@@ -3,19 +3,19 @@ package game
 import "math"
 
 type Planet struct {
-	Name           string
-	Ores           []*Ore
-	Distribution   []float64
-	MiningLevel    int
-	ShipSpeedLeve1 int
-	ShipCargoLevel int
-	UnlockCost     int
-	ColonyLevel    int
-	AlchemyLevel   int
-	Distance       float64
-	Locked         bool
-	Manager        *Manager
-	Rover          bool
+	Name           string   `gorm:"primaryKey"`
+	Ores           []*Ore   `gorm:"-"` // Ignored by GORM
+	Distribution   []float64 `gorm:"-"` // Ignored by GORM
+	MiningLevel    int      `gorm:"default:1"`
+	ShipSpeedLeve1 int      `gorm:"default:1"`
+	ShipCargoLevel int      `gorm:"default:1"`
+	UnlockCost     int      `gorm:"-"` // Ignored by GORM
+	ColonyLevel    int      `gorm:"default:0"`
+	AlchemyLevel   int      `gorm:"default:0"`
+	Distance       float64  `gorm:"-"` // Ignored by GORM
+	Locked         bool     `gorm:"default:true"`
+	Manager        *Manager `gorm:"foreignKey:PlanetName;references:Name"` // HasOne/Optional relationship
+	Rover          bool     `gorm:"default:false"`
 }
 
 func (g *Game) GetPlanetByName(name string) *Planet {
@@ -31,7 +31,7 @@ func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
 	planet := g.GetPlanetByName(planetName)
 	if planet != nil {
 		planet.ColonyLevel = colonyLevel
-		updatePlanetDB(DB, planet)
+		g.updatePlanetDB(planet)
 	}
 }
 
@@ -56,7 +56,7 @@ func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int) {
 				}
 			}
 		}
-		updatePlanetDB(DB, planet)
+		g.updatePlanetDB(planet)
 	}
 }
 
@@ -153,7 +153,7 @@ func (p *Planet) isCargoSufficent(level int) bool {
 	//return p.getMiningRate(level) > p.getShippingVolume()
 }
 
-func (p *Planet) upgradeMining() {
+func (p *Planet) upgradeMining(g *Game) {
 	p.MiningLevel++
 	for !p.isCargoSufficent(p.MiningLevel) {
 		if p.isCargoSizeBetterUpgradeForVolume() {
@@ -162,7 +162,7 @@ func (p *Planet) upgradeMining() {
 			p.ShipSpeedLeve1++
 		}
 	}
-	updatePlanetDB(DB, p)
+	g.updatePlanetDB(p)
 }
 
 func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
@@ -182,15 +182,8 @@ func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
 	return cargoValue > speedValue
 }
 
-func (p *Planet) resetPlanet() {
-	p.MiningLevel = 1
-	p.ShipSpeedLeve1 = 1
-	p.ShipCargoLevel = 1
-	p.ColonyLevel = 0
-	p.AlchemyLevel = 0
-	p.Locked = true
-	p.Manager = nil
-	resetPlanetDB(DB, p)
+func (p *Planet) resetPlanet(g *Game) {
+	g.resetPlanetDB(p)
 }
 
 func NewPlanet(name string, ores []*Ore, distribution []float64, unlockCost int, distance float64) *Planet {

@@ -5,6 +5,7 @@ import (
 )
 
 type Projects struct {
+	ID             uint `gorm:"primaryKey;default:1"`
 	TelescopeLevel int
 	MiningLevel    int
 	ShipSpeedLevel int
@@ -28,6 +29,7 @@ type Projects struct {
 
 func newProjects() *Projects {
 	return &Projects{
+		ID:             1,
 		TelescopeLevel: 0,
 		MiningLevel:    0,
 		ShipSpeedLevel: 0,
@@ -51,16 +53,8 @@ func newProjects() *Projects {
 }
 
 func (g *Game) saveProjectsToDB(p *Projects) {
-	_, err := g.db.Exec("DELETE FROM projects")
-	if err != nil {
-		log.Fatal(err)
-	}
-	query := `
-			INSERT INTO projects (
-					telescope_level, mining_level, ship_speed_level, ship_cargo_level, beacon, tax_level, smelt_speed, smelt_eff, alloy_value, smelt_spec, craft_speed, craft_eff, item_value, craft_spec ,pref_vendor, ore_targeting, man_training, man_straing, leader_training
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`
-	_, err = g.db.Exec(query, p.TelescopeLevel, p.MiningLevel, p.ShipSpeedLevel, p.ShipCargoLevel, p.Beacon, p.TaxLevel, p.SmeltSpeed, p.SmeltEff, p.AlloyValue, p.SmeltSpec, p.CraftSpeed, p.CraftEff, p.ItemValue, p.CraftSpec, p.PrefVendor, p.OreTargeting, p.ManTraining, p.ManSTraing, p.LeaderTraining)
+	p.ID = 1
+	err := g.db.Save(p).Error
 	if err != nil {
 		log.Fatal(err)
 	}

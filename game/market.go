@@ -7,32 +7,25 @@ type Market struct {
 }
 
 func NewMarket(game *Game) *Market {
-	stars := make(map[Craftable]int)
+	starsMap := make(map[Craftable]int)
 	for _, ore := range game.Ores {
-		stars[ore] = 0
+		starsMap[ore] = 0
 	}
 	for _, alloy := range game.Alloys {
-		stars[alloy] = 0
+		starsMap[alloy] = 0
 	}
 	for _, item := range game.Items {
-		stars[item] = 0
+		starsMap[item] = 0
 	}
-	rows, err := game.db.Query("SELECT name, stars FROM stars")
-	if err != nil {
-		panic(err)
-	}
-	for rows.Next() {
-		var name string
-		var dbstars int
-		if err := rows.Scan(&name, &dbstars); err != nil {
-			panic(err)
-		}
-		item := game.getCratablebyName(name)
+
+	var dbStars []Star
+	game.db.Find(&dbStars)
+	for _, s := range dbStars {
+		item := game.getCratablebyName(s.Name)
 		if item != nil {
-			stars[item] = dbstars
+			starsMap[item] = s.Stars
 		}
 	}
-	defer rows.Close()
 
 	trend := make(map[Craftable]float64)
 	for _, ore := range game.Ores {
@@ -47,7 +40,7 @@ func NewMarket(game *Game) *Market {
 
 	return &Market{
 		game:  game,
-		Stars: stars,
+		Stars: starsMap,
 		Trend: trend,
 	}
 }
@@ -71,7 +64,10 @@ func (m *Market) saveStars(item Craftable, stars int) error {
 	if stars == 0 {
 		return m.removeStars(item)
 	}
-	_, err := m.game.db.Exec("INSERT OR REPLACE INTO stars (name, stars) VALUES (?, ?)", item.getName(), stars)
+	var star Star
+	m.game.db.Where("name = ?", item.getName()).FirstOrCreate(&star, Star{Name: item.getName()})
+	star.Stars = stars
+	err := m.game.db.Save(&star).Error
 	m.Stars[item] = stars
 	return err
 }
@@ -83,7 +79,7 @@ func (m *Market) saveTrend(item Craftable, trend float64) error {
 }
 
 func (m *Market) removeStars(item Craftable) error {
-	_, err := m.game.db.Exec("DELETE FROM stars WHERE name = ?", item.getName())
+	err := m.game.db.Where("name = ?", item.getName()).Delete(&Star{}).Error
 	m.Stars[item] = 0
 	return err
 }

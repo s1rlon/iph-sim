@@ -1,13 +1,19 @@
 package game
 
 import (
-	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
+	"gorm.io/gorm"
 )
 
 type Beacon struct {
-	Levels []float64
+	ID     uint      `gorm:"primaryKey;default:1"`
+	Levels []float64 `gorm:"type:text"`
+}
+
+func (b *Beacon) BeforeSave(tx *gorm.DB) error {
+	return nil
 }
 
 func newBeacon() *Beacon {
@@ -15,36 +21,36 @@ func newBeacon() *Beacon {
 	for i := range levels {
 		levels[i] = 1
 	}
-	return &Beacon{Levels: levels}
+	return &Beacon{ID: 1, Levels: levels}
 }
 
-func loadBeaconDataFromDB(db *sql.DB) *Beacon {
-	var jsonString string
-	querySQL := `SELECT beacon FROM beacon WHERE id = 1`
-	err := db.QueryRow(querySQL).Scan(&jsonString)
+func (g *Game) loadBeaconDataFromDB() *Beacon {
+	var b struct {
+		ID     uint
+		Levels string
+	}
+	err := g.db.Table("beacons").First(&b, 1).Error
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return newBeacon()
 		}
-		log.Fatal(err)
 	}
-	var b Beacon
-	// Deserialize the JSON string back into an array
-	err = json.Unmarshal([]byte(jsonString), &b.Levels)
+
+	var levels []float64
+	err = json.Unmarshal([]byte(b.Levels), &levels)
 	if err != nil {
-		log.Fatal(err)
+		return newBeacon()
 	}
-	return &b
+	return &Beacon{ID: b.ID, Levels: levels}
 }
 
 func (g *Game) saveBeaconLevelsToDB(levels []float64) {
-	// Serialize the array into a JSON string
 	jsonString, err := json.Marshal(levels)
 	if err != nil {
 		log.Fatal(err)
 	}
-	querySQL := `INSERT OR REPLACE INTO beacon (id, beacon) VALUES (1, ?)`
-	_, err = g.db.Exec(querySQL, jsonString)
+
+	err = g.db.Table("beacons").Save(map[string]interface{}{"id": 1, "levels": string(jsonString)}).Error
 	if err != nil {
 		log.Fatal(err)
 	}
