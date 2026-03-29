@@ -47,12 +47,17 @@ func RegisterPlanetRoutes(r *gin.Engine, gameInstance *game.Game) {
 
 	r.POST("/update-alchemy-level", func(c *gin.Context) {
 		planetName := c.PostForm("planet")
-		colonyLevel, err := strconv.Atoi(c.PostForm("alchemyLevel"))
+		alchemyLevel, err := strconv.Atoi(c.PostForm("alchemyLevel"))
 		if err != nil {
-			c.String(http.StatusBadRequest, "Invalid stars value")
+			c.String(http.StatusBadRequest, "Invalid alchemy level value")
 			return
 		}
-		gameInstance.UpdateAlchemyLevel(planetName, colonyLevel)
+		oreIndex, err := strconv.Atoi(c.PostForm("oreIndex"))
+		if err != nil {
+			c.String(http.StatusBadRequest, "Invalid ore index value")
+			return
+		}
+		gameInstance.UpdateAlchemyLevel(planetName, alchemyLevel, oreIndex)
 		c.Redirect(http.StatusFound, "/")
 	})
 

@@ -115,17 +115,21 @@
     </form>
     </div>
     <div class="table-container">
-        <form action="/update-alchemy-level" method="post">
-            <label for="planet">Planet:</label>
-            <select id="planet" name="planet">
+        <form id="alchemyForm" action="/update-alchemy-level" method="post">
+            <label for="alchemyPlanet">Planet:</label>
+            <select id="alchemyPlanet" name="planet">
                 {{range .Planets}}
                 {{if not .Locked}}
                 <option value="{{.Name}}">{{.Name}}</option>
                 {{end}}
                 {{end}}
             </select>
+            <label for="alchemyOreIndex">Ore Index:</label>
+            <select id="alchemyOreIndex" name="oreIndex">
+                <!-- Options populated by JS -->
+            </select>
             <label for="alchemyLevel">Alchemy Level:</label>
-            <input type="number" id="alchemyLevel" name="alchemyLevel" min="0" class="small-input" value="1">
+            <input type="number" id="alchemyLevel" name="alchemyLevel" min="0" class="small-input" value="0">
             <button type="submit">Set Alchemy Level</button>
         </form>
     </div>
@@ -164,5 +168,37 @@
     </tr>
     {{end}}
 </table>
+
+<script>
+    const planetOres = {
+        {{range .Planets}}"{{.Name}}": [{{range $i, $ore := .BaseOreNames}}{{if $i}},{{end}}"{{$ore}}"{{end}}],{{end}}
+    };
+
+    const planetSelect = document.getElementById('alchemyPlanet');
+    const oreSelect = document.getElementById('alchemyOreIndex');
+
+    if (planetSelect && oreSelect) {
+        function updateOreOptions() {
+            const planetName = planetSelect.value;
+            const ores = planetOres[planetName] || [];
+            
+            // Clear existing options
+            oreSelect.innerHTML = '';
+            
+            // Add new options
+            ores.forEach((oreName, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${index + 1} (${oreName})`;
+                oreSelect.appendChild(option);
+            });
+        }
+
+        planetSelect.addEventListener('change', updateOreOptions);
+        
+        // Initialize on load
+        updateOreOptions();
+    }
+</script>
 </body>
 </html>

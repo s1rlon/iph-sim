@@ -4,7 +4,8 @@ import "math"
 
 type Planet struct {
 	Name           string   `gorm:"primaryKey"`
-	Ores           []*Ore   `gorm:"-"` // Ignored by GORM
+	Ores           []*Ore   `gorm:"-"` // Modified by alchemy
+	BaseOreNames   []string `gorm:"-"` // Baseline for alchemy resets
 	Distribution   []float64 `gorm:"-"` // Ignored by GORM
 	MiningLevel    int      `gorm:"default:1"`
 	ShipSpeedLeve1 int      `gorm:"default:1"`
@@ -12,6 +13,7 @@ type Planet struct {
 	UnlockCost     int      `gorm:"-"` // Ignored by GORM
 	ColonyLevel    int      `gorm:"default:0"`
 	AlchemyLevel   int      `gorm:"default:0"`
+	AlchemizedOreIndex int  `gorm:"default:-1"` // Index of ore that has alchemy applied
 	Distance       float64  `gorm:"-"` // Ignored by GORM
 	Locked         bool     `gorm:"default:true"`
 	Manager        *Manager `gorm:"foreignKey:PlanetName;references:Name"` // HasOne/Optional relationship
@@ -35,28 +37,32 @@ func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
 	}
 }
 
-func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int) {
+func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int, oreIndex int) {
 	planet := g.GetPlanetByName(planetName)
 	if planet != nil {
 		planet.AlchemyLevel = alchemyLevel
-		oreslen := len(planet.Ores)
-		currentOre := planet.Ores[oreslen-1]
+		planet.AlchemizedOreIndex = oreIndex
+		g.ApplyAlchemy(planet)
+		g.updatePlanetDB(planet)
+	}
+}
+
+func (g *Game) ApplyAlchemy(planet *Planet) {
+	// Reset to baseline first
+	planet.Ores = getOres(g.Ores, planet.BaseOreNames...)
+
+	if planet.AlchemyLevel > 0 && planet.AlchemizedOreIndex >= 0 && planet.AlchemizedOreIndex < len(planet.Ores) {
+		currentOre := planet.Ores[planet.AlchemizedOreIndex]
 		var nextOre *Ore
 		for i, ore := range g.Ores {
-			if ore == currentOre && i+alchemyLevel < len(g.Ores) {
-				nextOre = g.Ores[i+alchemyLevel]
+			if ore.Name == currentOre.Name && i+planet.AlchemyLevel < len(g.Ores) {
+				nextOre = g.Ores[i+planet.AlchemyLevel]
 				break
 			}
 		}
 		if nextOre != nil {
-			for i, ore := range planet.Ores {
-				if ore == currentOre {
-					planet.Ores[i] = nextOre
-					break
-				}
-			}
+			planet.Ores[planet.AlchemizedOreIndex] = nextOre
 		}
-		g.updatePlanetDB(planet)
 	}
 }
 
@@ -183,19 +189,29 @@ func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
 }
 
 func (p *Planet) resetPlanet(g *Game) {
+	p.MiningLevel = 1
+	p.ShipSpeedLeve1 = 1
+	p.ShipCargoLevel = 1
+	p.ColonyLevel = 0
+	p.AlchemyLevel = 0
+	p.AlchemizedOreIndex = -1
+	p.Locked = true
+	p.Manager = nil
 	g.resetPlanetDB(p)
 }
 
-func NewPlanet(name string, ores []*Ore, distribution []float64, unlockCost int, distance float64) *Planet {
+func NewPlanet(name string, ores []*Ore, oreNames []string, distribution []float64, unlockCost int, distance float64) *Planet {
 	return &Planet{
 		Name:           name,
 		Ores:           ores,
+		BaseOreNames:   oreNames,
 		Distribution:   distribution,
 		MiningLevel:    1, // Default value
 		ShipSpeedLeve1: 1, // Default value
 		ShipCargoLevel: 1, // Default value
 		ColonyLevel:    0,
 		AlchemyLevel:   0,
+		AlchemizedOreIndex: -1,
 		Locked:         true, // Default value
 		UnlockCost:     unlockCost,
 		Distance:       distance,
@@ -205,46 +221,46 @@ func NewPlanet(name string, ores []*Ore, distribution []float64, unlockCost int,
 func makeNewPlanets(ores []*Ore) []*Planet {
 
 	return []*Planet{
-		NewPlanet("Balor", getOres(ores, "Copper"), []float64{1.0}, 100, 15),
-		NewPlanet("Drasta", getOres(ores, "Copper", "Iron"), []float64{0.8, 0.2}, 200, 15.4),
-		NewPlanet("Anadius", getOres(ores, "Copper", "Iron"), []float64{0.5, 0.5}, 500, 15.8),
-		NewPlanet("Dholen", getOres(ores, "Iron", "Lead"), []float64{0.8, 0.2}, 1250, 15.8),
-		NewPlanet("Verr", getOres(ores, "Lead", "Iron", "Copper"), []float64{0.5, 0.3, 0.2}, 5000, 16.4),
-		NewPlanet("Newton", getOres(ores, "Lead"), []float64{1.0}, 9000, 17.2),
-		NewPlanet("Widow", getOres(ores, "Iron", "Copper", "Silica"), []float64{0.4, 0.4, 0.2}, 15000, 19),
-		NewPlanet("Acheron", getOres(ores, "Silica", "Copper"), []float64{0.6, 0.4}, 25000, 19.5),
-		NewPlanet("Yangtze", getOres(ores, "Silica", "Aluminium"), []float64{0.8, 0.2}, 40000, 19.5),
-		NewPlanet("Solveig", getOres(ores, "Aluminium", "Silica", "Lead"), []float64{0.5, 0.3, 0.2}, 75000, 21),
-		NewPlanet("Imir", getOres(ores, "Aluminium"), []float64{1.0}, 150000, 22.5),
-		NewPlanet("Relic", getOres(ores, "Lead", "Silica", "Silver"), []float64{0.45, 0.35, 0.2}, 250000, 24.5),
-		NewPlanet("Nith", getOres(ores, "Silver", "Aluminium"), []float64{0.8, 0.2}, 400000, 26),
-		NewPlanet("Batalla", getOres(ores, "Copper", "Iron", "Gold"), []float64{0.4, 0.4, 0.2}, 800000, 29),
-		NewPlanet("Micah", getOres(ores, "Gold", "Silver"), []float64{0.5, 0.5}, 1500000, 30.5),
-		NewPlanet("Pranas", getOres(ores, "Gold"), []float64{1.0}, 3000000, 32.5),
-		NewPlanet("Castellus", getOres(ores, "Aluminium", "Silica", "Diamond"), []float64{0.4, 0.35, 0.25}, 6000000, 33.5),
-		NewPlanet("Gorgon", getOres(ores, "Diamond", "Lead"), []float64{0.8, 0.2}, 12000000, 35),
-		NewPlanet("Parnitha", getOres(ores, "Gold", "Platinum"), []float64{0.7, 0.3}, 25000000, 38),
-		NewPlanet("Orisoni", getOres(ores, "Platinum", "Diamond"), []float64{0.7, 0.3}, 50000000, 40),
-		NewPlanet("Theseus", getOres(ores, "Platinum"), []float64{1.0}, 100000000, 44),
-		NewPlanet("Zelene", getOres(ores, "Silver", "Titanium"), []float64{0.7, 0.3}, 200000000, 47.5),
-		NewPlanet("Han", getOres(ores, "Titanium", "Diamond", "Gold"), []float64{0.7, 0.2, 0.1}, 400000000, 50),
-		NewPlanet("Strennus", getOres(ores, "Titanium", "Platinum"), []float64{0.7, 0.3}, 800000000, 55),
-		NewPlanet("Osun", getOres(ores, "Aluminium", "Iridium"), []float64{0.6, 0.4}, 1600000000, 58),
-		NewPlanet("Ploitari", getOres(ores, "Iridium", "Diamond"), []float64{0.5, 0.5}, 3200000000, 60),
-		NewPlanet("Elysta", getOres(ores, "Iridium"), []float64{1.0}, 6400000000, 63),
-		NewPlanet("Tikkuun", getOres(ores, "Iridium", "Titanium", "Palladium"), []float64{0.4, 0.35, 0.25}, 12500000000, 67),
-		NewPlanet("Satent", getOres(ores, "Palladium", "Titanium"), []float64{0.6, 0.4}, 25000000000, 70),
-		NewPlanet("Urla Rast", getOres(ores, "Palladium", "Diamond"), []float64{0.9, 0.1}, 50000000000, 73),
-		NewPlanet("Vular", getOres(ores, "Palladium", "Osmium"), []float64{0.7, 0.3}, 100000000000, 75),
-		NewPlanet("Nibiru", getOres(ores, "Osmium", "Iridium"), []float64{0.6, 0.4}, 250000000000, 76),
-		NewPlanet("Xena", getOres(ores, "Osmium"), []float64{1.0}, 600000000000, 78),
-		NewPlanet("Rupert", getOres(ores, "Palladium", "Osmium", "Rhodium"), []float64{0.55, 0.3, 0.15}, 1500000000000, 78),
-		NewPlanet("Pax", getOres(ores, "Rhodium", "Platinum"), []float64{0.5, 0.5}, 4000000000000, 80),
-		NewPlanet("Ivyra", getOres(ores, "Rhodium"), []float64{1.0}, 10000000000000, 81),
-		NewPlanet("Utrits", getOres(ores, "Rhodium", "Inerton"), []float64{0.8, 0.2}, 25000000000000, 82),
-		NewPlanet("Doosie", getOres(ores, "Inerton", "Osmium"), []float64{0.5, 0.5}, 62000000000000, 84),
-		NewPlanet("Zulu", getOres(ores, "Inerton"), []float64{1.0}, 160000000000000, 84),
-		NewPlanet("Unicae", getOres(ores, "Inerton", "Quadium"), []float64{0.8, 0.2}, 400000000000000, 85),
-		NewPlanet("Dune", getOres(ores, "Osmium"), []float64{1.0}, 1000000000000000, 87),
+		NewPlanet("Balor", getOres(ores, "Copper"), []string{"Copper"}, []float64{1.0}, 100, 15),
+		NewPlanet("Drasta", getOres(ores, "Copper", "Iron"), []string{"Copper", "Iron"}, []float64{0.8, 0.2}, 200, 15.4),
+		NewPlanet("Anadius", getOres(ores, "Copper", "Iron"), []string{"Copper", "Iron"}, []float64{0.5, 0.5}, 500, 15.8),
+		NewPlanet("Dholen", getOres(ores, "Iron", "Lead"), []string{"Iron", "Lead"}, []float64{0.8, 0.2}, 1250, 15.8),
+		NewPlanet("Verr", getOres(ores, "Lead", "Iron", "Copper"), []string{"Lead", "Iron", "Copper"}, []float64{0.5, 0.3, 0.2}, 5000, 16.4),
+		NewPlanet("Newton", getOres(ores, "Lead"), []string{"Lead"}, []float64{1.0}, 9000, 17.2),
+		NewPlanet("Widow", getOres(ores, "Iron", "Copper", "Silica"), []string{"Iron", "Copper", "Silica"}, []float64{0.4, 0.4, 0.2}, 15000, 19),
+		NewPlanet("Acheron", getOres(ores, "Silica", "Copper"), []string{"Silica", "Copper"}, []float64{0.6, 0.4}, 25000, 19.5),
+		NewPlanet("Yangtze", getOres(ores, "Silica", "Aluminium"), []string{"Silica", "Aluminium"}, []float64{0.8, 0.2}, 40000, 19.5),
+		NewPlanet("Solveig", getOres(ores, "Aluminium", "Silica", "Lead"), []string{"Aluminium", "Silica", "Lead"}, []float64{0.5, 0.3, 0.2}, 75000, 21),
+		NewPlanet("Imir", getOres(ores, "Aluminium"), []string{"Aluminium"}, []float64{1.0}, 150000, 22.5),
+		NewPlanet("Relic", getOres(ores, "Lead", "Silica", "Silver"), []string{"Lead", "Silica", "Silver"}, []float64{0.45, 0.35, 0.2}, 250000, 24.5),
+		NewPlanet("Nith", getOres(ores, "Silver", "Aluminium"), []string{"Silver", "Aluminium"}, []float64{0.8, 0.2}, 400000, 26),
+		NewPlanet("Batalla", getOres(ores, "Copper", "Iron", "Gold"), []string{"Copper", "Iron", "Gold"}, []float64{0.4, 0.4, 0.2}, 800000, 29),
+		NewPlanet("Micah", getOres(ores, "Gold", "Silver"), []string{"Gold", "Silver"}, []float64{0.5, 0.5}, 1500000, 30.5),
+		NewPlanet("Pranas", getOres(ores, "Gold"), []string{"Gold"}, []float64{1.0}, 3000000, 32.5),
+		NewPlanet("Castellus", getOres(ores, "Aluminium", "Silica", "Diamond"), []string{"Aluminium", "Silica", "Diamond"}, []float64{0.4, 0.35, 0.25}, 6000000, 33.5),
+		NewPlanet("Gorgon", getOres(ores, "Diamond", "Lead"), []string{"Diamond", "Lead"}, []float64{0.8, 0.2}, 12000000, 35),
+		NewPlanet("Parnitha", getOres(ores, "Gold", "Platinum"), []string{"Gold", "Platinum"}, []float64{0.7, 0.3}, 25000000, 38),
+		NewPlanet("Orisoni", getOres(ores, "Platinum", "Diamond"), []string{"Platinum", "Diamond"}, []float64{0.7, 0.3}, 50000000, 40),
+		NewPlanet("Theseus", getOres(ores, "Platinum"), []string{"Platinum"}, []float64{1.0}, 100000000, 44),
+		NewPlanet("Zelene", getOres(ores, "Silver", "Titanium"), []string{"Silver", "Titanium"}, []float64{0.7, 0.3}, 200000000, 47.5),
+		NewPlanet("Han", getOres(ores, "Titanium", "Diamond", "Gold"), []string{"Titanium", "Diamond", "Gold"}, []float64{0.7, 0.2, 0.1}, 400000000, 50),
+		NewPlanet("Strennus", getOres(ores, "Titanium", "Platinum"), []string{"Titanium", "Platinum"}, []float64{0.7, 0.3}, 800000000, 55),
+		NewPlanet("Osun", getOres(ores, "Aluminium", "Iridium"), []string{"Aluminium", "Iridium"}, []float64{0.6, 0.4}, 1600000000, 58),
+		NewPlanet("Ploitari", getOres(ores, "Iridium", "Diamond"), []string{"Iridium", "Diamond"}, []float64{0.5, 0.5}, 3200000000, 60),
+		NewPlanet("Elysta", getOres(ores, "Iridium"), []string{"Iridium"}, []float64{1.0}, 6400000000, 63),
+		NewPlanet("Tikkuun", getOres(ores, "Iridium", "Titanium", "Palladium"), []string{"Iridium", "Titanium", "Palladium"}, []float64{0.4, 0.35, 0.25}, 12500000000, 67),
+		NewPlanet("Satent", getOres(ores, "Palladium", "Titanium"), []string{"Palladium", "Titanium"}, []float64{0.6, 0.4}, 25000000000, 70),
+		NewPlanet("Urla Rast", getOres(ores, "Palladium", "Diamond"), []string{"Palladium", "Diamond"}, []float64{0.9, 0.1}, 50000000000, 73),
+		NewPlanet("Vular", getOres(ores, "Palladium", "Osmium"), []string{"Palladium", "Osmium"}, []float64{0.7, 0.3}, 100000000000, 75),
+		NewPlanet("Nibiru", getOres(ores, "Osmium", "Iridium"), []string{"Osmium", "Iridium"}, []float64{0.6, 0.4}, 250000000000, 76),
+		NewPlanet("Xena", getOres(ores, "Osmium"), []string{"Osmium"}, []float64{1.0}, 600000000000, 78),
+		NewPlanet("Rupert", getOres(ores, "Palladium", "Osmium", "Rhodium"), []string{"Palladium", "Osmium", "Rhodium"}, []float64{0.55, 0.3, 0.15}, 1500000000000, 78),
+		NewPlanet("Pax", getOres(ores, "Rhodium", "Platinum"), []string{"Rhodium", "Platinum"}, []float64{0.5, 0.5}, 4000000000000, 80),
+		NewPlanet("Ivyra", getOres(ores, "Rhodium"), []string{"Rhodium"}, []float64{1.0}, 10000000000000, 81),
+		NewPlanet("Utrits", getOres(ores, "Rhodium", "Inerton"), []string{"Rhodium", "Inerton"}, []float64{0.8, 0.2}, 25000000000000, 82),
+		NewPlanet("Doosie", getOres(ores, "Inerton", "Osmium"), []string{"Inerton", "Osmium"}, []float64{0.5, 0.5}, 62000000000000, 84),
+		NewPlanet("Zulu", getOres(ores, "Inerton"), []string{"Inerton"}, []float64{1.0}, 160000000000000, 84),
+		NewPlanet("Unicae", getOres(ores, "Inerton", "Quadium"), []string{"Inerton", "Quadium"}, []float64{0.8, 0.2}, 400000000000000, 85),
+		NewPlanet("Dune", getOres(ores, "Osmium"), []string{"Osmium"}, []float64{1.0}, 1000000000000000, 87),
 	}
 }

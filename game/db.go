@@ -15,7 +15,8 @@ func (g *Game) resetPlanetDB(planet *Planet) {
 	planet.ShipCargoLevel = 1
 	planet.ColonyLevel = 0
 	planet.Locked = true
-	planet.AlchemyLevel = 1
+	planet.AlchemyLevel = 0
+	planet.AlchemizedOreIndex = -1
 	planet.Rover = false
 	g.db.Save(planet)
 }

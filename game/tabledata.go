@@ -12,6 +12,7 @@ type OreDatas struct {
 
 type PlanetData struct {
 	Name         string
+	BaseOreNames []string
 	MiningLevel  int
 	SpeedLevel   int
 	CargoLevel   int
@@ -79,6 +80,7 @@ func (game *Game) CreateTableData() TableData {
 		if !planet.Locked {
 			planetData = append(planetData, PlanetData{
 				Name:         planet.Name,
+				BaseOreNames: planet.BaseOreNames,
 				MiningLevel:  planet.MiningLevel,
 				SpeedLevel:   planet.ShipSpeedLeve1,
 				CargoLevel:   planet.ShipCargoLevel,
@@ -92,8 +94,9 @@ func (game *Game) CreateTableData() TableData {
 			})
 		} else {
 			planetData = append(planetData, PlanetData{
-				Name:   planet.Name,
-				Locked: planet.Locked,
+				Name:         planet.Name,
+				BaseOreNames: planet.BaseOreNames,
+				Locked:       planet.Locked,
 			})
 		}
 

@@ -91,6 +91,8 @@ func (g *Game) InitData() {
 				planet.Locked = dbPlanet.Locked
 				planet.ColonyLevel = dbPlanet.ColonyLevel
 				planet.AlchemyLevel = dbPlanet.AlchemyLevel
+				planet.AlchemizedOreIndex = dbPlanet.AlchemizedOreIndex
+				g.ApplyAlchemy(planet)
 			}
 		}
 	}
