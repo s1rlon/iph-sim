@@ -41,41 +41,6 @@ func (a *Alloy) getRecepie() *Recepie {
 	return MarketSVC.getRecepieByName(a.Name)
 }
 
-func createAlloys() []*Alloy {
-	return []*Alloy{
-		{
-			Name:     "Copper Bar",
-			Value:    1450,
-			BaseTime: 20,
-		},
-		{
-			Name:     "Iron Bar",
-			Value:    3000,
-			BaseTime: 30,
-		},
-		{
-			Name:     "Lead Bar",
-			Value:    6100,
-			BaseTime: 40,
-		},
-		{
-			Name:     "Silicon Bar",
-			Value:    12500,
-			BaseTime: 60,
-		},
-		{
-			Name:     "Aluminium Bar",
-			Value:    27600,
-			BaseTime: 80,
-		},
-		{
-			Name:     "Silver",
-			Value:    60000,
-			BaseTime: 120,
-		},
-	}
-}
-
 func (g *Game) getAlloy(name string) *Alloy {
 	for _, alloy := range g.Alloys {
 		if alloy.Name == name {

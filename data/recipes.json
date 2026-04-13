@@ -1,0 +1,46 @@
+[
+  {
+    "Result": "Copper Bar",
+    "Input": { "Copper": 1000 }
+  },
+  {
+    "Result": "Iron Bar",
+    "Input": { "Iron": 1000 }
+  },
+  {
+    "Result": "Lead Bar",
+    "Input": { "Lead": 1000 }
+  },
+  {
+    "Result": "Silicon Bar",
+    "Input": { "Silica": 1000 }
+  },
+  {
+    "Result": "Aluminium Bar",
+    "Input": { "Aluminium": 1000 }
+  },
+  {
+    "Result": "Copper Wire",
+    "Input": { "Copper Bar": 5 }
+  },
+  {
+    "Result": "Iron Nail",
+    "Input": { "Iron Bar": 5 }
+  },
+  {
+    "Result": "Battery",
+    "Input": { "Copper Wire": 2, "Copper Bar": 10 }
+  },
+  {
+    "Result": "Hammer",
+    "Input": { "Iron Nail": 2, "Lead Bar": 5 }
+  },
+  {
+    "Result": "Glass",
+    "Input": { "Silicon Bar": 10 }
+  },
+  {
+    "Result": "Circuit",
+    "Input": { "Silicon Bar": 5, "Aluminium Bar": 5, "Copper Wire": 10 }
+  }
+]

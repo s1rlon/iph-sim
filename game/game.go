@@ -54,15 +54,22 @@ func NewGame() *Game {
 		panic(err)
 	}
 
-	ores := createOres()
-
 	g := &Game{
-		Planets:   makeNewPlanets(ores),
 		LastSteps: 1,
 		db:        db,
-		Ores:      ores,
-		Alloys:    createAlloys(),
-		Items:     createItems(),
+	}
+
+	if err := g.loadOres(); err != nil {
+		panic(err)
+	}
+	if err := g.loadPlanets(); err != nil {
+		panic(err)
+	}
+	if err := g.loadAlloys(); err != nil {
+		panic(err)
+	}
+	if err := g.loadItems(); err != nil {
+		panic(err)
 	}
 
 	g.Managers = g.getManagersFromDB()
@@ -79,7 +86,9 @@ func NewGame() *Game {
 func (g *Game) InitData() {
 	GlobalCalcer = NewCalcer(g)
 	MarketSVC = NewMarket(g)
-	g.Recepies = createRecepies(g)
+	if err := g.loadRecipes(); err != nil {
+		panic(err)
+	}
 	DB = g.db
 	dbPlanets, _ := g.getPlanetsFromDB()
 	for _, planet := range g.Planets {
