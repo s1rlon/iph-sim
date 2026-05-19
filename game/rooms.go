@@ -50,7 +50,7 @@ func createRooms() *Rooms {
 
 func (g *Game) saveRoomsToDB(r *Rooms) {
 	r.ID = 1
-	err := g.db.Save(r).Error
+	err := g.SaveRooms(r)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -4,6 +4,7 @@ type Alloy struct {
 	Name     string
 	Value    float64
 	BaseTime float64
+	game     *Game
 }
 
 func (a *Alloy) getName() string {
@@ -15,15 +16,15 @@ func (a *Alloy) getBaseValue() float64 {
 }
 
 func (a *Alloy) getStars() int {
-	return MarketSVC.getStars(a)
+	return a.game.Market.getStars(a)
 }
 
 func (a *Alloy) getValue() float64 {
-	return MarketSVC.getValue(a)
+	return a.game.Market.getValue(a)
 }
 
 func (a *Alloy) getTrend() float64 {
-	return MarketSVC.getTrend(a)
+	return a.game.Market.getTrend(a)
 }
 
 func (a *Alloy) getType() string {
@@ -35,10 +36,10 @@ func (a *Alloy) getBaseTime() float64 {
 }
 
 func (a *Alloy) getTime() float64 {
-	return a.BaseTime / GlobalCalcer.getSmeltSpeedBonus()
+	return a.BaseTime / a.game.Calcer.getSmeltSpeedBonus()
 }
 func (a *Alloy) getRecepie() *Recepie {
-	return MarketSVC.getRecepieByName(a.Name)
+	return a.game.Market.getRecepieByName(a.Name)
 }
 
 func (g *Game) getAlloy(name string) *Alloy {

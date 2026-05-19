@@ -54,7 +54,7 @@ func newProjects() *Projects {
 
 func (g *Game) saveProjectsToDB(p *Projects) {
 	p.ID = 1
-	err := g.db.Save(p).Error
+	err := g.SaveProjects(p)
 	if err != nil {
 		log.Fatal(err)
 	}

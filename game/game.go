@@ -26,6 +26,8 @@ type Game struct {
 	Rooms     *Rooms
 	Beacon    *Beacon
 	Station   *Station
+	Calcer    *Calcer
+	Market    *Market
 }
 
 var GlobalCalcer *Calcer
@@ -84,8 +86,10 @@ func NewGame() *Game {
 }
 
 func (g *Game) InitData() {
-	GlobalCalcer = NewCalcer(g)
-	MarketSVC = NewMarket(g)
+	g.Calcer = NewCalcer(g)
+	GlobalCalcer = g.Calcer
+	g.Market = NewMarket(g)
+	MarketSVC = g.Market
 	if err := g.loadRecipes(); err != nil {
 		panic(err)
 	}
@@ -110,7 +114,7 @@ func (g *Game) InitData() {
 func (g *Game) ResetGalaxy() {
 	g.ResetPlanets()
 	g.ResetManagers()
-	g.GameData.resetGameData()
+	g.GameData.resetGameData(g)
 	g.UpdateProjects(newProjects())
 }
 

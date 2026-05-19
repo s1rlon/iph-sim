@@ -35,7 +35,7 @@ func NewShips() *Ships {
 func (g *Game) UpdateShips(ships *Ships) {
 	g.Ships = ships
 	ships.ID = 1
-	err := g.db.Save(ships).Error
+	err := g.SaveShips(ships)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -4,6 +4,7 @@ type Item struct {
 	Name     string
 	Value    float64
 	BaseTime float64
+	game     *Game
 }
 
 func (i *Item) getName() string {
@@ -15,14 +16,14 @@ func (i *Item) getBaseValue() float64 {
 }
 
 func (i *Item) getStars() int {
-	return MarketSVC.getStars(i)
+	return i.game.Market.getStars(i)
 }
 
 func (i *Item) getValue() float64 {
-	return MarketSVC.getValue(i)
+	return i.game.Market.getValue(i)
 }
 func (i *Item) getTrend() float64 {
-	return MarketSVC.getTrend(i)
+	return i.game.Market.getTrend(i)
 }
 
 func (i *Item) getType() string {
@@ -35,7 +36,7 @@ func (i *Item) getTime() float64 {
 	return i.BaseTime
 }
 func (i *Item) getRecepie() *Recepie {
-	return MarketSVC.getRecepieByName(i.Name)
+	return i.game.Market.getRecepieByName(i.Name)
 }
 
 func (g *Game) getItem(name string) *Item {

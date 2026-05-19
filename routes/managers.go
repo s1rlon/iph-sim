@@ -75,7 +75,7 @@ func RegisterManagerRoutes(r *gin.Engine, gameInstance *game.Game) {
 			return
 		}
 		gameInstance.GameData.ManagerSlots = managerSlots
-		gameInstance.GameData.SyncDB(gameInstance)
+		gameInstance.SaveGameData(gameInstance.GameData)
 		c.Redirect(http.StatusFound, "/managers")
 	})
 

@@ -31,6 +31,9 @@ func (g *Game) loadOres() error {
 	if err := loadJSON("data/ores.json", &ores); err != nil {
 		return err
 	}
+	for _, o := range ores {
+		o.game = g
+	}
 	g.Ores = ores
 	return nil
 }
@@ -51,7 +54,7 @@ func (g *Game) loadPlanets() error {
 	g.Planets = make([]*Planet, len(planetData))
 	for i, pd := range planetData {
 		planetOres := getOres(g.Ores, pd.BaseOreNames...)
-		g.Planets[i] = NewPlanet(pd.Name, planetOres, pd.BaseOreNames, pd.Distribution, pd.UnlockCost, pd.Distance)
+		g.Planets[i] = NewPlanet(g, pd.Name, planetOres, pd.BaseOreNames, pd.Distribution, pd.UnlockCost, pd.Distance)
 	}
 
 	return nil
@@ -62,6 +65,9 @@ func (g *Game) loadAlloys() error {
 	if err := loadJSON("data/alloys.json", &alloys); err != nil {
 		return err
 	}
+	for _, a := range alloys {
+		a.game = g
+	}
 	g.Alloys = alloys
 	return nil
 }
@@ -70,6 +76,9 @@ func (g *Game) loadItems() error {
 	var items []*Item
 	if err := loadJSON("data/items.json", &items); err != nil {
 		return err
+	}
+	for _, i := range items {
+		i.game = g
 	}
 	g.Items = items
 	return nil

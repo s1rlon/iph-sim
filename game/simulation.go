@@ -28,14 +28,14 @@ func SimulateUpgrades(game *Game, steps int) {
 				bestPlanet.Locked = false
 				// After unlocking, we should probably initialize its levels if they aren't already 1
 				// but usually they are default 1.
-				game.updatePlanetDB(bestPlanet)
+				game.SavePlanet(bestPlanet)
 				// PlanetName remains just the name for an unlock entry
 			} else {
 				bestPlanet.upgradeMining(game)
 				upgradeHistory.PlanetName = fmt.Sprintf("%s (%d/%d/%d)", bestPlanet.Name, bestPlanet.MiningLevel, bestPlanet.ShipSpeedLeve1, bestPlanet.ShipCargoLevel)
 			}
 			game.GameData.UpgradeHistory = append(game.GameData.UpgradeHistory, upgradeHistory)
-			err := upgradeHistory.saveToDB(game)
+			err := game.SaveUpgradeHistory(&upgradeHistory)
 			if err != nil {
 				log.Fatal(err)
 			}

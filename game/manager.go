@@ -96,7 +96,7 @@ func (g *Game) UpdateManagerPlanet(managerID int, planetName string) error {
 			manager.Planet = planet
 			manager.PlanetName = &planet.Name
 			planet.Manager = manager
-			g.db.Save(manager)
+			g.SaveManager(manager)
 			return nil
 		}
 	}
@@ -195,7 +195,7 @@ func (g *Game) AssignManagers() {
 						assignedPlanets[planet.Name] = true
 						assignedManagers[manager.ID] = true
 						assignedCount++
-						g.db.Save(manager)
+						g.SaveManager(manager)
 						fmt.Printf("Assigning Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
 						break
 					}
@@ -226,7 +226,7 @@ func (g *Game) AssignManagers() {
 						assignedPlanets[planet.Name] = true
 						assignedManagers[manager.ID] = true
 						assignedCount++
-						g.db.Save(manager)
+						g.SaveManager(manager)
 						fmt.Printf("Assigning non-Miner manager %d to planet: %s with value add of %f\n", manager.ID, planet.Name, pmv.AddedValue)
 						break
 					}

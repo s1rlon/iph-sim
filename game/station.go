@@ -55,7 +55,7 @@ func (g *Game) loadStationDataFromDB() *Station {
 
 func (g *Game) saveStationDataToDB(station *Station) {
 	station.ID = 1
-	err := g.db.Save(station).Error
+	err := g.SaveStation(station)
 	if err != nil {
 		log.Fatal(err)
 	}

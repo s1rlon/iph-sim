@@ -18,6 +18,7 @@ type Planet struct {
 	Locked         bool     `gorm:"default:true"`
 	Manager        *Manager `gorm:"foreignKey:PlanetName;references:Name"` // HasOne/Optional relationship
 	Rover          bool     `gorm:"default:false"`
+	game           *Game    `gorm:"-"`
 }
 
 func (g *Game) GetPlanetByName(name string) *Planet {
@@ -33,7 +34,7 @@ func (g *Game) UpdateColonyLevel(planetName string, colonyLevel int) {
 	planet := g.GetPlanetByName(planetName)
 	if planet != nil {
 		planet.ColonyLevel = colonyLevel
-		g.updatePlanetDB(planet)
+		g.SavePlanet(planet)
 	}
 }
 
@@ -43,7 +44,7 @@ func (g *Game) UpdateAlchemyLevel(planetName string, alchemyLevel int, oreIndex 
 		planet.AlchemyLevel = alchemyLevel
 		planet.AlchemizedOreIndex = oreIndex
 		g.ApplyAlchemy(planet)
-		g.updatePlanetDB(planet)
+		g.SavePlanet(planet)
 	}
 }
 
@@ -68,7 +69,7 @@ func (g *Game) ApplyAlchemy(planet *Planet) {
 
 func (p *Planet) getMiningRate(level int) float64 {
 	levelFloat := float64(level)
-	return GlobalCalcer.planetCalcer.getMiningRate(p, levelFloat)
+	return p.game.Calcer.planetCalcer.getMiningRate(p, levelFloat)
 }
 
 func (p *Planet) Mine(level int) map[*Ore]float64 {
@@ -87,7 +88,7 @@ func (p *Planet) Mine(level int) map[*Ore]float64 {
 func (p *Planet) getLevelUpgradeCost(level int) float64 {
 	levelFloat := float64(level)
 	base_cost := (float64(p.UnlockCost) / 20) * math.Pow(1.3, levelFloat-1)
-	cost := base_cost - (base_cost * (1 - GlobalCalcer.getGobalUpgradeCostRedux()))
+	cost := base_cost - (base_cost * (1 - p.game.Calcer.getGobalUpgradeCostRedux()))
 	return cost
 }
 
@@ -140,12 +141,12 @@ func (p *Planet) getUpgradeROITime() float64 {
 
 func (p *Planet) getShipSpeed(level int) float64 {
 	levelfloat := float64(level)
-	return GlobalCalcer.planetCalcer.getShipSpeed(p, levelfloat)
+	return p.game.Calcer.planetCalcer.getShipSpeed(p, levelfloat)
 }
 
 func (p *Planet) getShipCargo(level int) float64 {
 	levelfloat := float64(level)
-	return GlobalCalcer.planetCalcer.getShipCargo(p, levelfloat)
+	return p.game.Calcer.planetCalcer.getShipCargo(p, levelfloat)
 }
 
 func (p *Planet) getShippingVolume() float64 {
@@ -168,7 +169,7 @@ func (p *Planet) upgradeMining(g *Game) {
 			p.ShipSpeedLeve1++
 		}
 	}
-	g.updatePlanetDB(p)
+	g.SavePlanet(p)
 }
 
 func (p *Planet) isCargoSizeBetterUpgradeForVolume() bool {
@@ -197,11 +198,13 @@ func (p *Planet) resetPlanet(g *Game) {
 	p.AlchemizedOreIndex = -1
 	p.Locked = true
 	p.Manager = nil
-	g.resetPlanetDB(p)
+	p.Rover = false
+	g.SavePlanet(p)
 }
 
-func NewPlanet(name string, ores []*Ore, oreNames []string, distribution []float64, unlockCost int, distance float64) *Planet {
+func NewPlanet(g *Game, name string, ores []*Ore, oreNames []string, distribution []float64, unlockCost int, distance float64) *Planet {
 	return &Planet{
+		game:           g,
 		Name:           name,
 		Ores:           ores,
 		BaseOreNames:   oreNames,

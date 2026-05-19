@@ -40,22 +40,14 @@ func (g *Game) loadGameDataFromDB() *GameData {
 	return &gd
 }
 
-func (uh *UpgradeHistory) saveToDB(g *Game) error {
-	return g.db.Save(uh).Error
-}
-
-func (gd *GameData) SyncDB(g *Game) {
-	g.db.Save(gd)
-}
-
 func (gd *GameData) LoadUpgradeHistoryFromDB(g *Game) error {
 	return g.db.Model(gd).Association("UpgradeHistory").Find(&gd.UpgradeHistory)
 }
 
-func (gd *GameData) resetGameData() {
+func (gd *GameData) resetGameData(g *Game) {
 	gd.UpgradeHistory = []UpgradeHistory{}
-	DB.Where("game_data_id = ?", gd.ID).Delete(&UpgradeHistory{})
+	g.db.Where("game_data_id = ?", gd.ID).Delete(&UpgradeHistory{})
 	gd.Crafters = 1
 	gd.Smelters = 1
-	DB.Save(gd)
+	g.SaveGameData(gd)
 }

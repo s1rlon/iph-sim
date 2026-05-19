@@ -9,21 +9,53 @@ func (g *Game) GetDB() *gorm.DB {
 	return g.db
 }
 
-func (g *Game) resetPlanetDB(planet *Planet) {
-	planet.MiningLevel = 1
-	planet.ShipSpeedLeve1 = 1
-	planet.ShipCargoLevel = 1
-	planet.ColonyLevel = 0
-	planet.Locked = true
-	planet.AlchemyLevel = 0
-	planet.AlchemizedOreIndex = -1
-	planet.Rover = false
-	g.db.Save(planet)
+// Centralized Save methods
+
+func (g *Game) SavePlanet(p *Planet) error {
+	return g.db.Save(p).Error
 }
 
-func (g *Game) updatePlanetDB(planet *Planet) {
-	g.db.Save(planet)
+func (g *Game) SaveManager(m *Manager) error {
+	return g.db.Save(m).Error
 }
+
+func (g *Game) SaveProjects(p *Projects) error {
+	return g.db.Save(p).Error
+}
+
+func (g *Game) SaveRooms(r *Rooms) error {
+	return g.db.Save(r).Error
+}
+
+func (g *Game) SaveShips(s *Ships) error {
+	return g.db.Save(s).Error
+}
+
+func (g *Game) SaveStation(s *Station) error {
+	return g.db.Save(s).Error
+}
+
+func (g *Game) SaveBeacon(b *Beacon) error {
+	return g.db.Save(b).Error
+}
+
+func (g *Game) SaveGameData(gd *GameData) error {
+	return g.db.Save(gd).Error
+}
+
+func (g *Game) SaveUpgradeHistory(uh *UpgradeHistory) error {
+	return g.db.Save(uh).Error
+}
+
+func (g *Game) SaveStar(s *Star) error {
+	return g.db.Save(s).Error
+}
+
+func (g *Game) DeleteStar(name string) error {
+	return g.db.Where("name = ?", name).Delete(&Star{}).Error
+}
+
+// Loader methods
 
 func (g *Game) getManagersFromDB() []*Manager {
 	var managers []*Manager

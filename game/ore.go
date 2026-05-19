@@ -3,6 +3,7 @@ package game
 type Ore struct {
 	Name  string
 	Value float64
+	game  *Game
 }
 
 func (o *Ore) getName() string {
@@ -14,11 +15,11 @@ func (o *Ore) getBaseValue() float64 {
 }
 
 func (o *Ore) getStars() int {
-	return MarketSVC.getStars(o)
+	return o.game.Market.getStars(o)
 }
 
 func (o *Ore) getTrend() float64 {
-	return MarketSVC.getTrend(o)
+	return o.game.Market.getTrend(o)
 }
 
 func (o *Ore) getType() string {
@@ -58,7 +59,7 @@ func getOre(name string, game *Game) *Ore {
 }
 
 func (o *Ore) getValue() float64 {
-	return MarketSVC.getValue(o)
+	return o.game.Market.getValue(o)
 }
 
 func (g *Game) getOre(name string) *Ore {
